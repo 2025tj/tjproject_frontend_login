@@ -5,29 +5,38 @@ import api from '../utils/axios'
 const Home = () => {
     const [email, setEmail] = useState('')
     const navigate =useNavigate()
+    const [isLoading, setIsLoading] =useState(null)
 
     useEffect(()=> {
-        const token = localStorage.getItem('accessToken')
-        if (!token) {
-            navigate('/login')
-            return
-        }
+        // const token = localStorage.getItem('accessToken')
+        // if (!token) {
+        //     navigate('/login')
+        //     return
+        // }
 
         // 사용자 정보 요청
         api.get('/users/me')
-            .then((res) => setEmail(res.data))
+            .then((res) => setEmail(res.data.email))
             .catch((err) => {
-                console.error(err)
-                alert('인증실패, 다시 로그인하세요')
-                localStorage.removeItem('accessToken')
+                // console.error(err)
+                // alert('인증실패, 다시 로그인하세요')
+                // // localStorage.removeItem('accessToken')
+                // // navigate('/login')
+                console.error('유저 정보 가져오기 실패: ', err)
                 navigate('/login')
             })
-    }, [navigate])
+            .finally(() => {
+                setIsLoading(false)
+            })
+    }, [])
 
     const handleLogout = () => {
-        localStorage.removeItem('accessToken')
+        document.cookie = "accessToken=; Max-Age=0; path=/"
+        // localStorage.removeItem('accessToken')
         window.location.href= '/login'
     }
+
+    if (!isLoading) return <div>로딩중...</div>
 
     return (
         <div style={{ padding: '2rem'}}>

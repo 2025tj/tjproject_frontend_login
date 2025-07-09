@@ -5,18 +5,21 @@ const OAuth2Redirect = () => {
     const navigate = useNavigate()
     const location = useLocation()
 
-    useEffect(()=> {
-        const params = new URLSearchParams(location.search)
-        const token = params.get('token')
+    // useEffect(()=> {
+    //     const params = new URLSearchParams(location.search)
+    //     const token = params.get('token')
 
-        if (token) {
-            localStorage.setItem("accessToken", token)
-            navigate("/")
-        } else {
-            alert('로그인 실패')
-            navigate("/login")
-        }
-    }, [location, navigate])
+    //     if (token) {
+    //         localStorage.setItem("accessToken", token)
+    //         navigate("/")
+    //     } else {
+    //         alert('로그인 실패')
+    //         navigate("/login")
+    //     }
+    // }, [location, navigate])
+    useEffect(()=> {
+        navigate("/")
+    }, [])
 
     return (
         <div>
