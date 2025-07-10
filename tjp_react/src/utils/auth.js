@@ -11,8 +11,9 @@ export const getToken = () => {
 export const checkLogin = async () => {
     try {
         const res = await api.get('/users/me')
-        return res.data.email // 예: 이메일주소
-    } catch (err) {
+        return res.data
+        // return res.data.email // 예: 이메일주소
+    } catch {
         return null
     }
 }

@@ -4,31 +4,49 @@ import LoginPage from '../pages/LoginPage'
 import OAuth2Redirect from '../pages/OAuth2Redirect'
 import { useEffect, useState } from 'react'
 import { checkLogin } from '../utils/auth'
+import PrivateRoute from './PrivateRoute'
+import { useDispatch, useSelector } from 'react-redux'
+import { login, logout } from '../features/auth/authSlice'
 
 const AppRouter = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
+    const dispatch = useDispatch()
 
     useEffect(()=> {
         const checkAuth = async () => {
-            const user = await checkLogin()
-            setIsAuthenticated(!!user)
+            const userData = await checkLogin()
+            if (userData) {
+                dispatch(login(userData))
+            } else {
+                dispatch(logout())
+            }
+            setLoading(false)
         }
-        checkAuth()
-    }, [])
 
-    if (isAuthenticated === null) return <div>로딩중...</div>
+        if (!localStorage.getItem('accessToken')) {
+                dispatch(logout())
+                setLoading(false)
+        } else {
+            checkAuth()
+        }
+
+    }, [dispatch])
+
+    if (loading) return <div>로딩중...</div>
 
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/"
-                        element={isAuthenticated
-                            ? <Home />
-                            : <Navigate to ="/login" />} />
-                <Route path="/login" 
-                        element={!isAuthenticated 
-                            ? <LoginPage />
-                            : <Navigate to="/" />} />
+                <Route path="/" element={
+                    <PrivateRoute isAuthenticated={isAuthenticated}>
+                        <Home />
+                    </PrivateRoute>
+                } />
+                <Route path="/login" element={
+                    !isAuthenticated 
+                        ? <LoginPage />
+                        : <Navigate to="/" replace />} />
                 <Route path="/oauth2/redirect" element={<OAuth2Redirect />} />
             </Routes>
         </BrowserRouter>
