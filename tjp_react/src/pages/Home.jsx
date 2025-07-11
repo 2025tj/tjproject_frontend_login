@@ -11,7 +11,7 @@ const Home = () => {
 
     const handleLogout = async () => {
         try {
-            await api.post('/users/logout',
+            await api.post('/auth/logout',
                 {},
                 {withCredentials: true}) // 쿠키 삭제 요청
         } catch(e) {
@@ -28,6 +28,7 @@ const Home = () => {
             <h1>홈 화면입니다</h1>
             <p>로그인에 성공했습니다</p>
             <p>로그인된 사용자: {user.email}</p>
+            <button onClick={() => navigate('/mypage')}>마이페이지</button>
             <button onClick={handleLogout}>로그아웃</button>
         </div>
     )

@@ -7,6 +7,7 @@ import { checkLogin } from '../utils/auth'
 import PrivateRoute from './PrivateRoute'
 import { useDispatch, useSelector } from 'react-redux'
 import { login, logout } from '../features/auth/authSlice'
+import MyPage from '../pages/MyPage'
 
 const AppRouter = () => {
     const [loading, setLoading] = useState(true)
@@ -41,6 +42,11 @@ const AppRouter = () => {
                 <Route path="/" element={
                     <PrivateRoute isAuthenticated={isAuthenticated}>
                         <Home />
+                    </PrivateRoute>
+                } />
+                <Route path="/mypage" element={
+                    <PrivateRoute isAuthenticated={isAuthenticated}>
+                        <MyPage />
                     </PrivateRoute>
                 } />
                 <Route path="/login" element={

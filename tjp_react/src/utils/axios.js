@@ -24,7 +24,7 @@ api.interceptors.response.use(
             originalConfig._retry =true
             try {
                 const res= await axios.post(
-                    'http://localhost:8080/api/users/refresh',
+                    'http://localhost:8080/api/auth/refresh',
                     {},
                     {withCredentials:true}) // 쿠키 전송
                 const newToken = res.data.accessToken
