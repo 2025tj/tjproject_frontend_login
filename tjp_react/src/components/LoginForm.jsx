@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import api from '../utils/axios'
 import { login } from '../features/auth/authSlice'
-import { checkLogin } from '../utils/auth'
+import { checkLogin, saveAccessTokenFromCookie } from '../utils/auth'
 
 const LoginForm = () => {
     const [form, setForm]=useState({email: '', password: ''})
@@ -18,23 +18,27 @@ const LoginForm = () => {
 
     const handleSubmit = async(e)=> {
         e.preventDefault()
+        setError('') // 이전 에러 초기화
         try {
-            const res = await api.post('/auth/login/local', form)
-            console.log("응답:",res.data)
-            const {accessToken} = res.data
-            if (!accessToken) {
-                setError("토큰이 응답에 없음")
-                return
-            }
-            localStorage.setItem('accessToken', accessToken)
-            console.log("localStorage저장됨:", localStorage.getItem("accessToken"))
+            await api.post('/auth/login/local', form)
+            // accessToken은 쿠키에서 1회 저장
+            saveAccessTokenFromCookie()
 
             // 사용자 정보 확인 후 redux 저장
             const user = await checkLogin()
+            if (!user) {
+              setError("사용자 정보를 불러오지 못했습니다.")
+              return
+            }
             dispatch(login(user))
             navigate('/')
         } catch(err) {
-            setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+            console.err("로그인 실패: ", err)
+            if (err.response?.status===401) {
+              setError("이메일 또는 비밀번호가 올바르지 않습니다.")
+            } else {
+              setError('서버 오류. 잠시 후 다시 시도해주세요.')
+            }
         }
     }
   return (

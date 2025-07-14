@@ -1,75 +1,78 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Provider, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom'
-import { checkLogin } from '../utils/auth';
+import { checkLogin, saveAccessTokenFromCookie } from '../utils/auth';
 import { login } from '../features/auth/authSlice';
 
 const OAuth2Redirect = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const dispatch = useDispatch()
+    const [loading, setLoading] = useState(true)
 
     useEffect(()=> {
         const params = new URLSearchParams(location.search)
-        const accessToken = params.get('accessToken')
         const error = params.get('error')
-        const email = params.get('email'); // url에 명시된 경우
-        const provider = params.get('provider'); //"google" 등
+        const link = params.get('link') === 'true'
 
-        if (accessToken) {
-            localStorage.setItem("accessToken", accessToken)
-            checkLogin().then(user => {
-                dispatch(login(user))
-                navigate('/')
-            }).catch(() => {
-                alert('유저정보 로딩실패')
-                navigate('/login')
+        if (error) {
+            alert("로그인 실패: "+error)
+            navigate("/login")
+            return
+        }
+
+        if (link) {
+            // 연동 필요한 상태 -> 사용자 정보 요청
+            fetch("/api/users/pending-social-link", {credentials: "include"})
+            .then(res=> {
+                if (!res.ok) throw new Error("정보 조회 실패")
+                return res.json()
             })
-        } else if (error) {
-            console.warn("Oauth2 로그인 에러:", error)
-
-            // 이메일 파싱 백업: error메세지 안에 포함된 경우 추출
-            const fallbackEmail = error.match(/\[email=(.*?)\]/)?.[1] || email
-
-            // 연동 메세지 포함 시
-            if (error.includes("일반 회원으로 가입된 이메일")) {
-                const shouldLink = (window.confirm("이미 일반 회원으로 가입된 이메일입니다.\n 소셜 계정과 연동하시겠습니까?"))
+            .then(data => {
+                const {email, provider} =data
+                if (!email || !provider) throw new Error("필수 정보 없음")
+                const shouldLink = window.confirm(
+                    "이미 가입된 이메일입니다.\n${provider} 계정과 연동하시겠습니까?"    
+                )
                 if (shouldLink) {
-                    // 연동 요청
-                    fetch("/users/link-social", {
+                    return fetch("/api/users/link-social", {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        }, 
-                        body: JSON.stringify({
-                            email: fallbackEmail,
-                            provider: provider
-                        })
-                    })
-                    .then(res=> {
-                        if (!res.ok) throw new Error("연동 실패");
-                        alert("소셜 연동 완료! 다시 로그인해주세요.")
-                        navigate("/login")
-                    })
-                    .catch(err=> {
-                        alert("연동중 오류 발생: "+err.message)
-                        navigate("/login")
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({email, provider})
                     })
                 } else {
                     navigate("/login")
+                    throw new Error("사용자 취소")
                 }
-            } else {
-                alert("로그인 실패:" +error)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("연동 실패")
+                alert("연동 완료! 다시 로그인해주세요")
                 navigate("/login")
-            }
-        } else {
-            alert('로그인 실패: accessToken 없음')
-            navigate("/login")
+            })
+            .catch(err => {
+                alert("연동중 오류: "+err.message)
+                navigate("/login")
+            })
+            .finally(() => setLoading(false))
+            return
         }
-    }, [])
+        //정상로그인 : accessToken 쿠키 -> LocalStorage 저장 후 로그인 처리
+        saveAccessTokenFromCookie()
+        checkLogin()
+        .then(user => {
+            dispatch(login(user))
+            navigate("/")
+        })
+        .catch(()=> {
+            alert("유저 정보 확인 실패")
+            navigate("/login")
+        })
+        .finally(()=> setLoading(false))
+    }, [location.search, dispatch, navigate])
     return (
         <div>
-            <h2>로그인 처리중 입니다...</h2>
+            <h2>{loading ? "로그인 처리중 입니다..." : "리디렉션 완료"}</h2>
         </div>
     )
 }

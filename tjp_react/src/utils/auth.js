@@ -3,6 +3,16 @@ import api from './axios'
 export const getToken = () => {
     return localStorage.getItem('accessToken')
 }
+export const saveAccessTokenFromCookie = () => {
+    const cookies = document.cookie.split('; ');
+    for (let cookie of cookies) {
+        const [key, value] = cookie.split('=');
+        if (key === 'accessToken') 
+            localStorage.setItem('accessToken', decodeURIComponent(value))
+            return
+        
+    }
+}
 
 // export const isLoggedIn = () => {
 //     return !!getToken()
