@@ -3,7 +3,7 @@ import Home from '../pages/Home'
 import LoginPage from '../pages/LoginPage'
 import OAuth2Redirect from '../pages/OAuth2Redirect'
 import { useEffect, useState } from 'react'
-import { checkLogin } from '../utils/auth'
+import { checkLogin } from '../utils/authUtils'
 import PrivateRoute from './PrivateRoute'
 import { useDispatch, useSelector } from 'react-redux'
 import { login, logout } from '../features/auth/authSlice'
@@ -53,7 +53,8 @@ const AppRouter = () => {
                     !isAuthenticated 
                         ? <LoginPage />
                         : <Navigate to="/" replace />} />
-                <Route path="/oauth2/redirect" element={<OAuth2Redirect />} />
+                {/* <Route path="/oauth2/redirect" element={<OAuth2Redirect />} /> */}
+                <Route path="/oauth2/callback" element={<OAuth2Redirect />} />
             </Routes>
         </BrowserRouter>
     )

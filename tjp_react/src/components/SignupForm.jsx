@@ -19,7 +19,7 @@ const SignupForm = () => {
     const handleSubmit = async(e) => {
         e.preventDefault()
         try {
-            const res = await api.post('/auth/signup/local', form)
+            const res = await api.post('/auth/signup', form)
             alert('회원 가입 성공! 로그인 페이지로 이동합니다.')
             navigate('/login')
         } catch (err) {

@@ -3,66 +3,70 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import api from '../utils/axios'
 import { login } from '../features/auth/authSlice'
-import { checkLogin, saveAccessTokenFromCookie } from '../utils/auth'
+// 헤더 전용 저장 함수만 import
+import { saveAccessFromHeaders, checkLogin } from '../utils/authUtils'
+import axios from 'axios'
 
 const LoginForm = () => {
-    const [form, setForm]=useState({email: '', password: ''})
-    const [error, setError] = useState('')
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
+  const [form, setForm] = useState({ email: '', password: '' })
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
-    const handleChange = (e) => {
-        const { name, value} =e.target
-        setForm(prev => ({...prev, [name]: value}))
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setForm(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+
+    try {
+      // 로그인 요청 -> 헤더로만 토큰 반환
+      const res = await api.post('/auth/login', form)
+      // 헤더에서 AccessToken 꺼내 저장
+      saveAccessFromHeaders(res.headers)
+
+      // 사용자 정보 가져와 로그인 처리
+      const user = await checkLogin()
+      if (!user) {
+        setError("사용자 정보를 불러오지 못했습니다.")
+        return
+      }
+
+      dispatch(login(user))
+      navigate('/')
+    } catch (err) {
+      console.error("로그인 실패: ", err)
+      if (err.response?.status === 401) {
+        setError("이메일 또는 비밀번호가 올바르지 않습니다.")
+      } else {
+        setError('서버 오류. 잠시 후 다시 시도해주세요.')
+      }
     }
+  }
 
-    const handleSubmit = async(e)=> {
-        e.preventDefault()
-        setError('') // 이전 에러 초기화
-        try {
-            await api.post('/auth/login/local', form)
-            // accessToken은 쿠키에서 1회 저장
-            saveAccessTokenFromCookie()
-
-            // 사용자 정보 확인 후 redux 저장
-            const user = await checkLogin()
-            if (!user) {
-              setError("사용자 정보를 불러오지 못했습니다.")
-              return
-            }
-            dispatch(login(user))
-            navigate('/')
-        } catch(err) {
-            console.err("로그인 실패: ", err)
-            if (err.response?.status===401) {
-              setError("이메일 또는 비밀번호가 올바르지 않습니다.")
-            } else {
-              setError('서버 오류. 잠시 후 다시 시도해주세요.')
-            }
-        }
-    }
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <h2>일반 로그인</h2>
-        <input
-            type="email"
-            name="email"
-            placeholder="이메일"
-            value={form.email}
-            onChange={handleChange}
-        /><br />
-        <input
-            type="password"
-            name="password"
-            placeholder="비밀번호"
-            value={form.password}
-            onChange={handleChange}
-        /><br />
-        {error && <p style={{color:'red'}}>{error}</p>}
-        <button type ="submit">로그인</button>
-      </form>
-    </>
+    <form onSubmit={handleSubmit}>
+      <h2>일반 로그인</h2>
+      <input
+        type="email"
+        name="email"
+        placeholder="이메일"
+        value={form.email}
+        onChange={handleChange}
+      /><br />
+      <input
+        type="password"
+        name="password"
+        placeholder="비밀번호"
+        value={form.password}
+        onChange={handleChange}
+      /><br />
+      {error && <p style={{color:'red'}}>{error}</p>}
+      <button type="submit">로그인</button>
+    </form>
   )
 }
 
