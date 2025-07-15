@@ -8,6 +8,7 @@ import PrivateRoute from './PrivateRoute'
 import { useDispatch, useSelector } from 'react-redux'
 import { login, logout } from '../features/auth/authSlice'
 import MyPage from '../pages/MyPage'
+import EmailVerify from '../pages/EmailVerify'
 
 const AppRouter = () => {
     const [loading, setLoading] = useState(true)
@@ -55,6 +56,7 @@ const AppRouter = () => {
                         : <Navigate to="/" replace />} />
                 {/* <Route path="/oauth2/redirect" element={<OAuth2Redirect />} /> */}
                 <Route path="/oauth2/callback" element={<OAuth2Redirect />} />
+                <Route path="/email/verify" element={<EmailVerify />} />
             </Routes>
         </BrowserRouter>
     )

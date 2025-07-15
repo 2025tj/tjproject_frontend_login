@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import api from '../utils/axios'
-import { login } from '../features/auth/authSlice'
+import { setWarning, clearWarning, login } from '../features/auth/authSlice'
 // 헤더 전용 저장 함수만 import
 import { saveAccessFromHeaders, checkLogin } from '../utils/authUtils'
-import axios from 'axios'
 
 const LoginForm = () => {
   const [form, setForm] = useState({ email: '', password: '' })
@@ -35,8 +34,16 @@ const LoginForm = () => {
         return
       }
 
+      // warning 메시지 있으면 Redux에 저장
+      if (res.data.warning) {
+        dispatch(setWarning(res.data.warning))
+      } else {
+        dispatch(clearWarning())
+      }
+
       dispatch(login(user))
       navigate('/')
+
     } catch (err) {
       console.error("로그인 실패: ", err)
       if (err.response?.status === 401) {

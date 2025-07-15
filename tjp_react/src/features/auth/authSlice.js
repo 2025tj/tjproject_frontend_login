@@ -17,9 +17,15 @@ const authSlice = createSlice({
         logout(state) {
             state.isAuthenticated = false
             state.user = null
+        },
+        setWarning: (state, action) => {
+            state.warning = action.payload
+        },
+        clearWarning: (state) => {
+            state.warning = null
         }
     }
 }) 
 
-export const { login, logout} = authSlice.actions
+export const { login, logout, setWarning, clearWarning } = authSlice.actions
 export default authSlice.reducer
