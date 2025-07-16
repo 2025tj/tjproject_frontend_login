@@ -6,6 +6,7 @@ const SignupForm = () => {
     const [form, setForm] = useState({
         email: '',
         password: '',
+        confirmPassword: '',
         nickname: ''
     })
     const [errors, setErrors] = useState({})
@@ -19,7 +20,7 @@ const SignupForm = () => {
     const handleSubmit = async(e) => {
         e.preventDefault()
         try {
-            const res = await api.post('/auth/signup', form)
+            await api.post('/auth/signup', form)
             alert('회원 가입 성공! 로그인 페이지로 이동합니다.')
             navigate('/login')
         } catch (err) {
@@ -34,24 +35,58 @@ const SignupForm = () => {
     }
   return (
     <>
-      <form onSubmit={handleSubmit} style= {{maxWidth: 400}}>
-        <div>
-            <label>이메일</label><br />
-            <input type="email" name="email" value={form.email} onChange={handleChange} />
-            {errors.email && <p style={{color:'red'}}>{errors.email}</p>} 
-        </div>
-        <div>
-            <label>비밀번호</label><br />
-            <input type="password" name="password" value={form.password} onChange={handleChange} />
-            {errors.password && <p style={{color:'red'}}>{errors.password}</p>} 
-        </div>
-        <div>
-            <label>닉네임</label><br />
-            <input type="text" name="nickname" value={form.nickname} onChange={handleChange} />
-            {errors.nickname && <p style={{color:'red'}}>{errors.nickname}</p>} 
-        </div>
-        <button type="submit" style={{marginTop:'1rem'}}>회원가입</button>
-      </form>
+        <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
+            <div>
+                <label>이메일</label><br />
+                <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                />
+                {errors.email && <p style={{ color: 'red' }}>{errors.email}</p>}
+            </div>
+
+            <div>
+                <label>비밀번호</label><br />
+                <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                />
+                {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
+            </div>
+
+            <div>
+                <label>비밀번호 확인</label><br />
+                <input
+                type="password"
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                />
+                {errors.confirmPassword && <p style={{ color: 'red' }}>{errors.confirmPassword}</p>}
+                {errors['isPasswordMatching'] && (
+                <p style={{ color: 'red' }}>{errors['isPasswordMatching']}</p>
+                )}
+            </div>
+
+            <div>
+                <label>닉네임</label><br />
+                <input
+                type="text"
+                name="nickname"
+                value={form.nickname}
+                onChange={handleChange}
+                />
+                {errors.nickname && <p style={{ color: 'red' }}>{errors.nickname}</p>}
+            </div>
+
+            <button type="submit" style={{ marginTop: '1rem' }}>
+                회원가입
+            </button>
+        </form>
     </>
   )
 }

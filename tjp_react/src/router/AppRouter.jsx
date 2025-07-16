@@ -9,6 +9,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { login, logout } from '../features/auth/authSlice'
 import MyPage from '../pages/MyPage'
 import EmailVerify from '../pages/EmailVerify'
+import Header from '../components/Header'
+import SignupPage from '../pages/SignupPage'
+import SocialLinkPage from '../pages/SocialLinkPage'
+import OAuth2LinkRedirect from '../pages/OAuth2LinkRedirect'
+import OAuth2SignupRedirect from '../pages/OAuth2SignupRedirect'
 
 const AppRouter = () => {
     const [loading, setLoading] = useState(true)
@@ -16,35 +21,32 @@ const AppRouter = () => {
     const dispatch = useDispatch()
 
     useEffect(()=> {
-        const checkAuth = async () => {
-            const userData = await checkLogin()
-            if (userData) {
-                dispatch(login(userData))
-            } else {
-                dispatch(logout())
-            }
-            setLoading(false)
-        }
+        // const checkAuth = async () => {
+        //     const userData = await checkLogin()
+        //     if (userData) {
+        //         dispatch(login(userData))
+        //     } else {
+        //         dispatch(logout())
+        //     }
+        //     setLoading(false)
+        // }
 
         if (!localStorage.getItem('accessToken')) {
                 dispatch(logout())
                 setLoading(false)
         } else {
-            checkAuth()
+            // checkAuth()
         }
 
     }, [dispatch])
 
-    if (loading) return <div>로딩중...</div>
+    // if (loading) return <div>로딩중...</div>
 
     return (
         <BrowserRouter>
+            <Header />
             <Routes>
-                <Route path="/" element={
-                    <PrivateRoute isAuthenticated={isAuthenticated}>
-                        <Home />
-                    </PrivateRoute>
-                } />
+                <Route path="/" element={<Home />} />
                 <Route path="/mypage" element={
                     <PrivateRoute isAuthenticated={isAuthenticated}>
                         <MyPage />
@@ -55,8 +57,11 @@ const AppRouter = () => {
                         ? <LoginPage />
                         : <Navigate to="/" replace />} />
                 {/* <Route path="/oauth2/redirect" element={<OAuth2Redirect />} /> */}
-                <Route path="/oauth2/callback" element={<OAuth2Redirect />} />
+                <Route path="/oauth2/login" element={<OAuth2Redirect />} />
                 <Route path="/email/verify" element={<EmailVerify />} />
+                <Route path="/oauth2/link/:provider" element={<OAuth2LinkRedirect />} />
+                <Route path="/oauth2/signup/:provider" element={<OAuth2SignupRedirect />} />
+                <Route path="/signup" element={<SignupPage />} />
             </Routes>
         </BrowserRouter>
     )
