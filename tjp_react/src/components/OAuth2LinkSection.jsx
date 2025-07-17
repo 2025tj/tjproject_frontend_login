@@ -3,6 +3,7 @@ import api from '../utils/axios';
 import Modal from './modals/Modal';
 import SocialLoginModal from './modals/OAuth2LinkModal';
 import OAuth2LinkModal from './modals/OAuth2LinkModal';
+import { getAccessToken } from '../utils/authUtils';
 
 const OAuth2LinkSection = () => {
   const [linkedProviders, setLinkedProviders] = useState([]);
@@ -25,10 +26,53 @@ const OAuth2LinkSection = () => {
   };
 
   const handleSocialLink = (provider) => {
-    // 모달 대신 현재 창에서 OAuth2 페이지로 이동
-    // 연동 완료 후 다시 마이페이지로 돌아옴
-    window.location.href = `http://localhost:8080/oauth2/authorization/${provider}?mode=link`;
-  };
+    const accessToken = getAccessToken()
+    if (!accessToken) {
+      alert('로그인이 필요합니다.')
+      return
+    }
+
+    const width = 500;
+    const height = 600;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+
+    // const popup = window.open(
+    //   `http://localhost:8080/oauth2/authorization/google?redirect_uri=${encodeURIComponent('http://localhost:8080/oauth2/login/google?mode=link')}`,
+    //   'socialLink',
+    //   'width=600,height=700'
+    // );
+
+
+    const popup = window.open(
+      `http://localhost:8080/oauth2/authorization/${provider}?mode=link&token=${encodeURIComponent(accessToken)}`,
+      // `http://localhost:8080/oauth2/authorization/${provider}?state=mode=link`,
+      //  `http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:8080/oauth2/login/google?mode=link`,
+      'socialLink',
+      `width=${width},height=${height},top=${top},left=${left}`
+    )
+
+    const listener = (event) => {
+      if (event.origin !== 'http://localhost:8080') return
+
+      if (event.data?.type === 'SOCIAL_LINK_SUCCESS') {
+        alert(`${event.data.provider} 계정 연동 완료`)
+        fetchLinkedProviders()
+      } else if (event.data?.type === 'SOCIAL_LINK_FAIL') {
+        alert(`연동 실패: ${event.data.reason}`)
+      }
+
+      popup?.close()
+      window.removeEventListener('message', listener)
+    }
+    window.addEventListener('message', listener)
+  }
+
+  // const handleSocialLink = (provider) => {
+  //   // 모달 대신 현재 창에서 OAuth2 페이지로 이동
+  //   // 연동 완료 후 다시 마이페이지로 돌아옴
+  //   window.location.href = `http://localhost:8080/oauth2/authorization/${provider}?mode=link`;
+  // };
 
   // const handleSocialLink = (provider) => {
   //   setIsProcessing(provider);

@@ -1,5 +1,8 @@
 import axios from 'axios'
-import { getToken, removeToken, saveAccessFromHeaders} from './authUtils'
+import { extractAccessToken, getAccessToken, getToken, isTokenExpired, isTokenExpiringSoon, removeAccessToken, removeToken, saveAccessFromHeaders} from './authUtils'
+import store from '../app/store'
+// import { getAccessToken } from './tokenStorage'
+import { clearAccessToken, setAccessToken } from '../features/auth/authSlice'
 
 // 1) axios 인스턴스
 const api = axios.create({
@@ -14,19 +17,53 @@ export const refreshApi = axios.create({
 })
 
 
-// 2) 요청 인터셉터: localStorage의 accessToken을 Authorization 헤더에 추가
-api.interceptors.request.use((config) => {
-    const token = getToken()
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+// 2) 요청 인터셉터: 만료전 자동 refresh
+api.interceptors.request.use(async(config) => {
+    const token = getAccessToken()
+    if (token && isTokenExpiringSoon(token, 120)) {
+      try {
+        const res = await refreshApi.post('/refresh')
+        const newToken = extractAccessToken(res.headers)
+
+        if (newToken) {
+          saveAccessFromHeaders(res.headers)
+          config.headers.Authorization = `Bearer ${newToken}`
+        }
+      } catch {
+        removeAccessToken()
+        window.location.href = '/login'
+      } 
+    } else if (token) {
+      //Authorization 헤더에 붙이기
+      config.headers.Authorization = `Bearer ${token}`
     }
     return config;
 },(error) => Promise.reject(error))
 
+// // 2) 요청 인터셉터: 만료전 자동 refresh
+// api.interceptors.request.use(async(config) => {
+//     let token = store.getState().auth.accessToken
+//     if (token && isTokenExpiringSoon(token, 120)) {
+//       try {
+//         const res = await refreshApi.post('/refresh')
+//         const newToken = extractAccessToken(res.headers)
+//         store.dispatch(setAccessToken(newToken))
+//         config.headers.Authorization = `Bearer ${newToken}`
+//       } catch {
+//         store.dispatch(clearAccessToken())
+//         window.location.href = '/login'
+//       } 
+//     } else if (token) {
+//       //Authorization 헤더에 붙이기
+//       config.headers.Authorization = `Bearer ${token}`
+//     }
+//     return config;
+// },(error) => Promise.reject(error))
+
 // 3) 응답 인터셉터 : 401 Unauthorized(만료)시 refresh 토큰으로 재발급 시도
 api.interceptors.response.use(
-  response => response,
-  async error => {
+  (response) => response,
+  async (error) => {
     const originalRequest = error.config
 
     // 1) 이미 retry 중이거나, refresh 호출일 땐 그냥 원래 에러 던지기
@@ -55,7 +92,7 @@ api.interceptors.response.use(
         }
       } catch (refreshError) {
         // 재발급 실패 시 로그인 페이지로
-        removeToken()
+        removeAccessToken()
         window.location.href = '/login'
         return Promise.reject(refreshError)
       }

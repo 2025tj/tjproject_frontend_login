@@ -16,32 +16,33 @@ import OAuth2LinkRedirect from '../pages/OAuth2LinkRedirect'
 import OAuth2SignupRedirect from '../pages/OAuth2SignupRedirect'
 import OAuth2LinkComplete from '../components/OAuth2LinkComplete'
 
-const AppRouter = () => {
+const AppRouter = (isLoginChecked) => {
     const [loading, setLoading] = useState(true)
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
     const dispatch = useDispatch()
 
-    useEffect(()=> {
-        // const checkAuth = async () => {
-        //     const userData = await checkLogin()
-        //     if (userData) {
-        //         dispatch(login(userData))
-        //     } else {
-        //         dispatch(logout())
-        //     }
-        //     setLoading(false)
-        // }
+    // useEffect(()=> {
+    //     // const checkAuth = async () => {
+    //     //     const userData = await checkLogin()
+    //     //     if (userData) {
+    //     //         dispatch(login(userData))
+    //     //     } else {
+    //     //         dispatch(logout())
+    //     //     }
+    //     //     setLoading(false)
+    //     // }
 
-        if (!localStorage.getItem('accessToken')) {
-                dispatch(logout())
-                setLoading(false)
-        } else {
-            // checkAuth()
-        }
+    //     if (!localStorage.getItem('accessToken')) {
+    //             dispatch(logout())
+    //             setLoading(false)
+    //     } else {
+    //         // checkAuth()
+    //     }
 
-    }, [dispatch])
+    // }, [dispatch])
 
     // if (loading) return <div>로딩중...</div>
+    if (!isLoginChecked) return <div>로딩중...</div>
 
     return (
         <BrowserRouter>

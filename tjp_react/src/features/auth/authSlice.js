@@ -3,7 +3,9 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     isAuthenticated: false,
-    user: null
+    user: null,
+    warning : null,
+    accessToken : null,
 }
 
 const authSlice = createSlice({
@@ -17,15 +19,23 @@ const authSlice = createSlice({
         logout(state) {
             state.isAuthenticated = false
             state.user = null
+            state.accessToken = null
+            state.warning= null
         },
         setWarning: (state, action) => {
             state.warning = action.payload
         },
         clearWarning: (state) => {
             state.warning = null
+        },
+        setAccessToken(state, action) {
+            state.accessToken = action.payload
+        },
+        clearAccessToken(state) {
+            state.accessToken = null
         }
     }
 }) 
 
-export const { login, logout, setWarning, clearWarning } = authSlice.actions
+export const { login, logout, setWarning, clearWarning, setAccessToken, clearAccessToken } = authSlice.actions
 export default authSlice.reducer
