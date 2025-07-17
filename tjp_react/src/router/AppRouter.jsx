@@ -14,6 +14,7 @@ import SignupPage from '../pages/SignupPage'
 import SocialLinkPage from '../pages/SocialLinkPage'
 import OAuth2LinkRedirect from '../pages/OAuth2LinkRedirect'
 import OAuth2SignupRedirect from '../pages/OAuth2SignupRedirect'
+import OAuth2LinkComplete from '../components/OAuth2LinkComplete'
 
 const AppRouter = () => {
     const [loading, setLoading] = useState(true)
@@ -59,8 +60,8 @@ const AppRouter = () => {
                 {/* <Route path="/oauth2/redirect" element={<OAuth2Redirect />} /> */}
                 <Route path="/oauth2/login" element={<OAuth2Redirect />} />
                 <Route path="/email/verify" element={<EmailVerify />} />
-                <Route path="/oauth2/link/:provider" element={<OAuth2LinkRedirect />} />
-                <Route path="/oauth2/signup/:provider" element={<OAuth2SignupRedirect />} />
+                <Route path="/oauth2/link-complete/" element={<OAuth2LinkComplete />} />
+                {/* <Route path="/oauth2/signup/:provider" element={<OAuth2SignupRedirect />} /> */}
                 <Route path="/signup" element={<SignupPage />} />
             </Routes>
         </BrowserRouter>

@@ -1,15 +1,15 @@
 import React from 'react'
-import LoginButton from '../components/LoginButton'
 import SignupForm from '../components/SignupForm'
 import LoginForm from '../components/LoginForm'
 import { useNavigate } from 'react-router'
+import OAuth2LoginButton from '../components/OAuth2LoginButton'
 
 const LoginPage = () => {
   const navigate = useNavigate()
   return (
     <div>
       <h2>소셜 로그인</h2>
-      <LoginButton />
+      <OAuth2LoginButton />
       <hr />
       <LoginForm />
       <button onClick={() => navigate('/signup')}>

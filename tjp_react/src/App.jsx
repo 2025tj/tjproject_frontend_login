@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import AppRouter from './router/AppRouter'
 import './App.css'
 import GlobalModalAlert from './components/GlobalModalAlert'
@@ -8,14 +8,20 @@ import { login, logout } from './features/auth/authSlice'
 import api from './utils/axios'
 
 function App() {
-
+  const [isLoginChecked, setIsLoginChecked] = useState(false);
   const dispatch = useDispatch()
 
   useEffect(() => {
-    api.get('/auth/me')
+    api.get('/auth/me', { withCredentials: true })
       .then(({ data }) => dispatch(login(data)))
       .catch(() => dispatch(logout()))
+      .finally(() => setIsLoginChecked(true));
   }, [dispatch])
+
+  if (!isLoginChecked) {
+    return <div>로딩중...</div>;
+  }
+
 
   return (
     <>

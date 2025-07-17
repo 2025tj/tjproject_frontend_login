@@ -9,6 +9,7 @@ import { saveAccessFromHeaders, checkLogin } from '../utils/authUtils'
 const LoginForm = () => {
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -19,6 +20,7 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setIsLoading(true);
     setError('')
 
     try {
@@ -51,11 +53,14 @@ const LoginForm = () => {
       } else {
         setError('서버 오류. 잠시 후 다시 시도해주세요.')
       }
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
+      {error && <p>{error}</p>}
       <h2>일반 로그인</h2>
       <input
         type="email"
@@ -72,7 +77,9 @@ const LoginForm = () => {
         onChange={handleChange}
       /><br />
       {error && <p style={{color:'red'}}>{error}</p>}
-      <button type="submit">로그인</button>
+      <button type="submit"disabled={isLoading}>
+        {isLoading ? '로그인 중...' : '로그인'}
+      </button>
     </form>
   )
 }
