@@ -16,8 +16,8 @@ const MyPage = () => {
 
     const fetchUserInfo = async () => {
         try {
-            const response = await api.get('/auth/me');
-            setUser(response.data);
+            const response = await api.get('/users/me/details');
+            setUser(response.data.data);
         } catch (error) {
             if (error.response?.status === 401) {
                 navigate('/login');

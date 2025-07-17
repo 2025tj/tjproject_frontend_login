@@ -18,7 +18,7 @@ export default function EmailVerify() {
       setResult('토큰 정보가 없습니다.');
       return;
     }
-    api.get(`/auth/verify?token=${token}`)
+    api.get(`/email/verify?token=${token}`)
       .then(res => setResult(res.data))
       .catch(err => {
         setResult(

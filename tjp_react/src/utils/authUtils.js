@@ -99,7 +99,7 @@ export const isLoggedIn = () => {
  */
 export const checkLogin = async () => {
     try {
-        const res = await api.get('/auth/me')
+        const res = await api.get('/users/me/details')
         return res.data
         // return res.data.email // 예: 이메일주소
     } catch {

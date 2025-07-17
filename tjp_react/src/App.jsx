@@ -19,7 +19,7 @@ function App() {
         const res = await refreshApi.post('/refresh', null, {withCredentials: true})
         saveAccessFromHeaders(res.headers)
 
-        const userRes = await api.get('/auth/me')
+        const userRes = await api.get('/users/me/details')
         saveUserInfo(userRes.data)
       } catch (err) {
         removeUserInfo
