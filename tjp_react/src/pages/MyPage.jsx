@@ -56,7 +56,7 @@ const MyPage = () => {
                     <p>이메일: {user.email}</p>
                     <p>닉네임: {user.nickname || '설정되지 않음'}</p>
                     <p>역할: {user.roles?.join(', ')}</p>
-                    <p>가입일: {new Date(user.createdAt).toLocaleDateString()}</p>
+                    <p>가입일: {new Date(user.createdAt).toLocaleDateString('ko-KR')}</p>
                     <p>이메일 인증: 완료</p>
                 </div>
 
