@@ -7,7 +7,8 @@ import { useDispatch } from 'react-redux'
 import { login, logout, setAccessToken } from './features/auth/authSlice'
 import api, { refreshApi } from './utils/axios'
 // import { clearAccessToken, setAccessToken } from './utils/tokenStorage'
-import { extractAccessToken, removeAccessToken, removeUserInfo, saveAccessFromHeaders, saveUserInfo } from './utils/authUtils'
+import { extractAccessToken, getAccessToken, removeAccessToken, removeUserInfo, saveAccessFromHeaders, saveUserInfo } from './utils/authUtils'
+
 
 function App() {
   const [isLoginChecked, setIsLoginChecked] = useState(false);
@@ -15,6 +16,19 @@ function App() {
 
   useEffect(()=>{
     const init = async () => {
+      // const token = getAccessToken()
+      // if (!token) {
+      //   setIsLoginChecked(true)
+      //   return
+      // }
+
+      // 쿠키에 refresh token이 있는지 체크
+    // const hasRefreshToken = document.cookie.includes('refreshToken') // 쿠키명에 맞게 수정
+    
+    // if (!hasRefreshToken) {
+    //   setIsLoginChecked(true)
+    //   return
+    // }
       try {
         const res = await refreshApi.post('/refresh', null, {withCredentials: true})
         saveAccessFromHeaders(res.headers)
@@ -22,7 +36,7 @@ function App() {
         const userRes = await api.get('/users/me/details')
         saveUserInfo(userRes.data)
       } catch (err) {
-        removeUserInfo
+        removeUserInfo()
         removeAccessToken()
       } finally {
         setIsLoginChecked(true)

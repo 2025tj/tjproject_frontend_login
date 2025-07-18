@@ -53,16 +53,22 @@ const OAuth2LinkSection = () => {
     )
 
     const listener = (event) => {
-      if (event.origin !== 'http://localhost:8080') return
+      if (event.origin !== 'http://localhost:5173') return
 
       if (event.data?.type === 'SOCIAL_LINK_SUCCESS') {
-        alert(`${event.data.provider} 계정 연동 완료`)
+        // alert(`${event.data.provider} 계정 연동 완료`)
         fetchLinkedProviders()
       } else if (event.data?.type === 'SOCIAL_LINK_FAIL') {
         alert(`연동 실패: ${event.data.reason}`)
       }
 
-      popup?.close()
+      // try {
+      //   if (popup && !popup.closed) {
+      //     popup.close()
+      //   }
+      // } catch (error) {
+      //   console.log('팝업 닫기 실패 (정상적인 보안 정책):', error)
+      // }
       window.removeEventListener('message', listener)
     }
     window.addEventListener('message', listener)

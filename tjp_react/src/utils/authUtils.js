@@ -1,6 +1,6 @@
 import api from './axios'
 import * as jwtDecode from 'jwt-decode'
-import { getAccessToken as getTokenFromStore } from './tokenStorage';
+// import { getAccessToken as getTokenFromStore } from './tokenStorage';
 import axios from 'axios';
 import { 
   login as loginAction,
@@ -29,7 +29,7 @@ export const isTokenExpiringSoon = (token, buffer = 120)=> {
  * @returns {boolean} 만료되었으면 true
  */
 export function isTokenExpired() {
-  const token = getTokenFromStore()
+  const token = getAccessToken()
   if (!token) return true
   try {
     const { exp } = jwtDecode(token)
@@ -90,7 +90,7 @@ export const clearWarning = () => {
  * @returns {boolean}
  */
 export const isLoggedIn = () => {
-  return !!getTokenFromStore() && !isTokenExpired();
+  return !!getAccessToken() && !isTokenExpired();
 };
 
 /**
@@ -127,7 +127,7 @@ export const checkLogin = async () => {
 
 
 export {
-  getTokenFromStore as getToken,
+  // getTokenFromStore as getToken,
   saveAccessToken as saveToken,
   removeAccessToken as removeToken
 }

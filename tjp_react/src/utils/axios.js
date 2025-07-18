@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { extractAccessToken, getAccessToken, getToken, isTokenExpired, isTokenExpiringSoon, removeAccessToken, removeToken, saveAccessFromHeaders} from './authUtils'
+import { extractAccessToken, getAccessToken, isTokenExpired, isTokenExpiringSoon, removeAccessToken, removeToken, saveAccessFromHeaders} from './authUtils'
 import store from '../app/store'
 // import { getAccessToken } from './tokenStorage'
 import { clearAccessToken, setAccessToken } from '../features/auth/authSlice'
@@ -82,7 +82,7 @@ api.interceptors.response.use(
         const refreshRes = await refreshApi.post('/refresh')
         // 새 accessToken을 Header에서 꺼내 저장
         saveAccessFromHeaders(refreshRes.headers)
-        const newAccessToken = getToken()
+        const newAccessToken = getAccessToken()
         if (newAccessToken) {
           // axios 전역 헤더 갱신
           axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`

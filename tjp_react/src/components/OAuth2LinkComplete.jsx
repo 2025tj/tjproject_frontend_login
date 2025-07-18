@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 const OAuth2LinkComplete = () => {
   const [searchParams] = useSearchParams();
   const provider = searchParams.get('provider');
+  // const { provider } = useParams();
 
   useEffect(() => {
     // 모달(iframe) 내부에서 실행되는 경우

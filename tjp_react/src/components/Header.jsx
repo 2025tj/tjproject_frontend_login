@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router'
 import api from '../utils/axios'
 import { logout } from '../features/auth/authSlice'
+import { removeUserInfo } from '../utils/authUtils'
 
 const Header = () => {
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
@@ -17,8 +18,8 @@ const Header = () => {
         } catch (err) {
             console.error('로그아웃 요청 실패:', err)
         } finally {
-            localStorage.removeItem('accessToken')  // accessToken제거
-            dispatch(logout())
+            // localStorage.removeItem('accessToken')  // accessToken제거
+            removeUserInfo()
             navigate('/login')
         }
     }

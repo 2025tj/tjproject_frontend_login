@@ -18,13 +18,13 @@ import store from '../app/store'
 
 /**
  * Access Token 조회
- * @returns {string|null}
- */
-export function getAccessToken() {
-  // return localStorage.getItem(ACCESS_KEY)
-  // return accessToken
-  return store.getState().auth.accessToken
-}
+//  * @returns {string|null}
+//  */
+// export function getAccessToken() {
+//   // return localStorage.getItem(ACCESS_KEY)
+//   // return accessToken
+//   return store.getState().auth.accessToken
+// }
 
 /**
  * Access Token 제거

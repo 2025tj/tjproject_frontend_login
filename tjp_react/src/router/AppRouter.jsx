@@ -61,7 +61,7 @@ const AppRouter = (isLoginChecked) => {
                 {/* <Route path="/oauth2/redirect" element={<OAuth2Redirect />} /> */}
                 <Route path="/oauth2/login" element={<OAuth2Redirect />} />
                 <Route path="/email/verify" element={<EmailVerify />} />
-                <Route path="/oauth2/link-complete/" element={<OAuth2LinkComplete />} />
+                <Route path="/oauth2/link-complete" element={<OAuth2LinkComplete />} />
                 {/* <Route path="/oauth2/signup/:provider" element={<OAuth2SignupRedirect />} /> */}
                 <Route path="/signup" element={<SignupPage />} />
             </Routes>

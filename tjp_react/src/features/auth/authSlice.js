@@ -33,9 +33,14 @@ const authSlice = createSlice({
         },
         clearAccessToken(state) {
             state.accessToken = null
+        },
+        //완전한 상태 초기화 액션
+        resetAuthState(state) {
+            Object.assign(state, initialState)
+            console.log('Auth 상태 완전 초기화')
         }
     }
 }) 
 
-export const { login, logout, setWarning, clearWarning, setAccessToken, clearAccessToken } = authSlice.actions
+export const { login, logout, setWarning, clearWarning, setAccessToken, clearAccessToken, resetAuthState } = authSlice.actions
 export default authSlice.reducer
