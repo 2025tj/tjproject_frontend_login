@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { extractAccessToken, getAccessToken, isTokenExpired, isTokenExpiringSoon, removeAccessToken, removeToken, saveAccessFromHeaders} from './authUtils'
-import store from '../app/store'
+import store from '../redux/store'
 // import { getAccessToken } from './tokenStorage'
 import { clearAccessToken, setAccessToken } from '../features/auth/authSlice'
 

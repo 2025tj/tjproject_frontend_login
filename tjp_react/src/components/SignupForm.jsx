@@ -67,8 +67,8 @@ const SignupForm = () => {
                 onChange={handleChange}
                 />
                 {errors.confirmPassword && <p style={{ color: 'red' }}>{errors.confirmPassword}</p>}
-                {errors['isPasswordMatching'] && (
-                <p style={{ color: 'red' }}>{errors['isPasswordMatching']}</p>
+                {errors.passwordConfirmed && (
+                <p style={{ color: 'red' }}>{errors.passwordConfirmed}</p>
                 )}
             </div>
 

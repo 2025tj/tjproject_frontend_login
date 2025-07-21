@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import AppRouter from './router/AppRouter'
+import AppRouter from './routes/AppRouter'
 import './App.css'
 import GlobalModalAlert from './components/GlobalModalAlert'
 import Header from './components/Header'

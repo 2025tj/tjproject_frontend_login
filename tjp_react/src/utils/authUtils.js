@@ -10,7 +10,7 @@ import {
   setWarning as setWarningAction,
   clearWarning as clearWarningAction,
  } from '../features/auth/authSlice';
-import store from '../app/store';
+import store from '../redux/store';
 
 //---- 토큰 유틸들 ----
 
