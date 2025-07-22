@@ -13,6 +13,12 @@ import store from '@app/store';
 
 //---- 토큰 유틸들 ----
 
+/**
+ * 토큰이 곧 만료되는지 확인
+ * @param {string} token - JWT 토큰
+ * @param {number} buffer - 만료 전 버퍼 시간(초), 기본 120초
+ * @returns {boolean} 곧 만료되면 true
+ */
 export const isTokenExpiringSoon = (token, buffer = 120)=> {
   try {
     const { exp} =jwtDecode(token)
@@ -25,10 +31,11 @@ export const isTokenExpiringSoon = (token, buffer = 120)=> {
 
 /**
  * 토큰이 만료되었는지 확인
+ * @param {string} token - JWT 토큰
  * @returns {boolean} 만료되었으면 true
  */
-export function isTokenExpired() {
-  const token = getAccessToken()
+export function isTokenExpired(token) {
+  // const token = getAccessToken()
   if (!token) return true
   try {
     const { exp } = jwtDecode(token)
@@ -38,73 +45,80 @@ export function isTokenExpired() {
   }
 }
 
+/**
+ * HTTP 헤더에서 Access Token 추출
+ * @param {Object} headers - HTTP 응답 헤더
+ * @returns {string|null} 추출된 토큰 또는 null
+ */
 export const extractAccessToken = (headers) => {
   const raw = headers['access-token'] || headers['Access-Token']
   return raw?.startsWith('Bearer ') ? raw.slice(7) : raw
 }
 
 
-// Access Token getter
-export const getAccessToken = () => {
-  return store.getState().auth.accessToken
-}
+// // Access Token getter
+// export const getAccessToken = () => {
+//   return store.getState().auth.accessToken
+// }
 
 
-//---- redux Dispatch 래핑함수들
+// //---- redux Dispatch 래핑함수들
 
-// 리덕스에 accessToken 저장
-export const saveAccessToken = (token) => {
-  store.dispatch(setAccessTokenAction(token))
-}
+// // 리덕스에 accessToken 저장
+// export const saveAccessToken = (token) => {
+//   store.dispatch(setAccessTokenAction(token))
+// }
 
-// 리덕스 accessToken 제거
-export const removeAccessToken = () => {
-  store.dispatch(clearAccessTokenAction())
-}
-// 응답 헤더에서 AccessToken을 꺼내 리덕스에 저장
-export const saveAccessFromHeaders = (headers) => {
-  const token = extractAccessToken(headers)
-  if (token) saveAccessToken(token)
-}
+// // 리덕스 accessToken 제거
+// export const removeAccessToken = () => {
+//   store.dispatch(clearAccessTokenAction())
+// }
+// // 응답 헤더에서 AccessToken을 꺼내 리덕스에 저장
+// export const saveAccessFromHeaders = (headers) => {
+//   const token = extractAccessToken(headers)
+//   if (token) saveAccessToken(token)
+// }
 
-export const saveUserInfo = (user) => {
-  store.dispatch(loginAction(user))
-}
+// export const saveUserInfo = (user) => {
+//   store.dispatch(loginAction(user))
+// }
 
-export const removeUserInfo = () => {
-  store.dispatch(logoutAction())
-}
+// export const removeUserInfo = () => {
+//   store.dispatch(logoutAction())
+// }
 
-export const setWarning = (msg) => {
-  store.dispatch(setWarningAction(msg))
-}
+// export const setWarning = (msg) => {
+//   store.dispatch(setWarningAction(msg))
+// }
 
-export const clearWarning = () => {
-  store.dispatch(clearWarningAction())
-}
+// export const clearWarning = () => {
+//   store.dispatch(clearWarningAction())
+// }
 
 
-/**
- * 로그인 여부 확인: 토큰존재 && 만료전
- * @returns {boolean}
- */
-export const isLoggedIn = () => {
-  return !!getAccessToken() && !isTokenExpired();
-};
+// /**
+//  * 로그인 여부 확인: 토큰존재 && 만료전
+//  * @returns {boolean}
+//  */
+// export const isLoggedIn = () => {
+//   return !!getAccessToken() && !isTokenExpired();
+// };
 
-/**
- * 사용자 정보 조회 (users/me)
- * @returns {Promise<import('./axios').AxiosResponse['data']|null>}
- */
-export const checkLogin = async () => {
-    try {
-        const res = await api.get('/users/me/details')
-        return res.data
-        // return res.data.email // 예: 이메일주소
-    } catch {
-        return null
-    }
-}
+// /**
+//  * 사용자 정보 조회 (users/me)
+//  * @returns {Promise<import('./axios').AxiosResponse['data']|null>}
+//  */
+// export const checkLogin = async () => {
+//     try {
+//         const res = await api.get('/users/me/details')
+//         return res.data
+//         // return res.data.email // 예: 이메일주소
+//     } catch {
+//         return null
+//     }
+// }
+
+//-------
 
 // /**
 //  * 응답 헤더에서 AccessToken을 꺼내 리덕스에 저장
@@ -125,8 +139,8 @@ export const checkLogin = async () => {
 // }
 
 
-export {
-  // getTokenFromStore as getToken,
-  saveAccessToken as saveToken,
-  removeAccessToken as removeToken
-}
+// export {
+//   // getTokenFromStore as getToken,
+//   saveAccessToken as saveToken,
+//   removeAccessToken as removeToken
+// }

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { extractAccessToken, getAccessToken, isTokenExpired, isTokenExpiringSoon, removeAccessToken, removeToken, saveAccessFromHeaders} from '@features/auth/utils/tokenUtils'
+import { extractAccessToken, getAccessToken, isTokenExpired, isTokenExpiringSoon, removeAccessToken, removeToken, saveAccessFromHeaders} from '@features/auth/utils'
 // import {store} from '@app/store'
 // import { getAccessToken } from './tokenStorage'
 import { clearAccessToken, setAccessToken } from '@features/auth/store/authSlice'

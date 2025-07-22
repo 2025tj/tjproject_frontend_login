@@ -3,7 +3,7 @@ import {api} from '@shared/utils/api';
 import Modal from '@shared/components/ui/Modal/Modal';
 // import OAuth2LoginModal from '../../../components/modals/OAuth2LinkModal';
 // import OAuth2LinkModal from '../../../components/modals/OAuth2LinkModal';
-import { getAccessToken } from '../utils/tokenUtils';
+import { getAccessToken } from '../utils';
 
 const OAuth2LinkSection = () => {
   const [linkedProviders, setLinkedProviders] = useState([]);

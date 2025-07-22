@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import {api} from '@shared/utils/api'
-import { checkLogin, saveAccessFromHeaders } from '../utils/tokenUtils'
+import { checkLogin, saveAccessFromHeaders } from '../utils'
 import { login } from '../store/authSlice'
 import SignupForm from '../components/SignupForm'
 

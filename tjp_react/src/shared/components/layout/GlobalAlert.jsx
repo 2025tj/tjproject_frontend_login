@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { clearWarning } from '@features/auth/store/authSlice';
+import { useAuth } from '../../../features/auth/hooks/useAuth';
 
 const overlayStyle = {
   position: 'fixed',
@@ -36,39 +37,55 @@ const closeBtnStyle = {
 };
 
 const GlobalModalAlert = () => {
-  const warning = useSelector(state => state.auth.warning)
+  // const warning = useSelector(state => state.auth.warning)
   const dispatch = useDispatch()
+  const { warning, clearWarning } = useAuth()
 
-  // 1.5초 후 자동 닫기
+  // // 1.5초 후 자동 닫기
   useEffect(() => {
     if (!warning) return;
     const timer = setTimeout(() => {
-      dispatch(clearWarning());
+      clearWarning();
     }, 1500);
     return () => clearTimeout(timer);
-  }, [warning, dispatch]);
+  }, [warning, clearWarning]);
+  // useEffect(() => {
+  //   if (!warning) return;
+  //   const timer = setTimeout(() => {
+  //     dispatch(clearWarning());
+  //   }, 1500);
+  //   return () => clearTimeout(timer);
+  // }, [warning, dispatch]);
 
   if (!warning) return null;
 
   return (
-    <div style={overlayStyle} onClick={() => dispatch(clearWarning())}>
-      <div
-        style={modalStyle}
-        onClick={e => e.stopPropagation()} // 모달 밖 클릭시 닫히지만, 모달 안 클릭은 닫히지 않게
-        role="alertdialog"
-        aria-live="assertive"
-        aria-modal="true"
-      >
-        <button
-          aria-label="Close alert"
-          onClick={() => dispatch(clearWarning())}
-          style={closeBtnStyle}
-        >
+    <div style={overlayStyle} onClick={clearWarning}>
+      <div style={modalStyle} onClick={e => e.stopPropagation()}>
+        <button onClick={clearWarning} style={closeBtnStyle}>
           &times;
         </button>
         <p>⚠️ {warning}</p>
       </div>
     </div>
+    // <div style={overlayStyle} onClick={() => dispatch(clearWarning())}>
+    //   <div
+    //     style={modalStyle}
+    //     onClick={e => e.stopPropagation()} // 모달 밖 클릭시 닫히지만, 모달 안 클릭은 닫히지 않게
+    //     role="alertdialog"
+    //     aria-live="assertive"
+    //     aria-modal="true"
+    //   >
+    //     <button
+    //       aria-label="Close alert"
+    //       onClick={() => dispatch(clearWarning())}
+    //       style={closeBtnStyle}
+    //     >
+    //       &times;
+    //     </button>
+    //     <p>⚠️ {warning}</p>
+    //   </div>
+    // </div>
   )
 }
 

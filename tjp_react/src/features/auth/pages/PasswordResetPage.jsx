@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import PasswordResetForm from '../components/PasswordResetForm'
-import { authService } from '../services/authApi'
+import { authService } from '../api/authApi'
 
 const PasswordResetPage = () => {
   const [searchParams] = useSearchParams()

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Provider, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom'
-import { checkLogin, saveAccessFromHeaders,} from '../utils/tokenUtils';
+import { checkLogin, saveAccessFromHeaders,} from '../utils';
 import { login } from '../store/authSlice';
 import {api} from '@shared/utils/api';
 

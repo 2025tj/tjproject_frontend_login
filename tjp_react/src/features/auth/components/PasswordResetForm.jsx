@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { authService } from '../services/authApi'
+// import authApi from '../api/authApi'
+import { useAuth } from '../hooks/useAuth'
 
 const PasswordResetForm = ({ token }) => {
   const navigate = useNavigate()
@@ -8,53 +9,81 @@ const PasswordResetForm = ({ token }) => {
     newPassword: '',
     confirmPassword: ''
   })
-  const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
+  // const [message, setMessage] = useState('')
+  // const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const { resetPassword, loading, error, clearError } = useAuth()
+
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     })
+
+    // 입력 시 에러 클리어
+    if (error) clearError()
+    if (successMessage) setSuccessMessage('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
-    setMessage('')
 
     // 클라이언트 사이드 검증
     if (formData.newPassword !== formData.confirmPassword) {
-      setMessage('비밀번호가 일치하지 않습니다.')
-      setLoading(false)
-      return
+      return // 에러는 별도 상태로 관리하거나 Redux에서 처리
     }
 
     if (formData.newPassword.length < 8) {
-      setMessage('비밀번호는 8자 이상이어야 합니다.')
-      setLoading(false)
       return
     }
+    // setLoading(true)
+    // setMessage('')
+
+    // 클라이언트 사이드 검증
+    // if (formData.newPassword !== formData.confirmPassword) {
+    //   setMessage('비밀번호가 일치하지 않습니다.')
+    //   setLoading(false)
+    //   return
+    // }
+
+    // if (formData.newPassword.length < 8) {
+    //   setMessage('비밀번호는 8자 이상이어야 합니다.')
+    //   setLoading(false)
+    //   return
+    // }
     
-    try {
-      const result = await authService.resetPassword(
-        token, 
-        formData.newPassword, 
-        formData.confirmPassword
-      )
+     try {
+      await resetPassword(token, formData.newPassword, formData.confirmPassword).unwrap()
       
-      setMessage('비밀번호가 성공적으로 재설정되었습니다. 잠시 후 로그인 페이지로 이동합니다.')
+      setSuccessMessage('비밀번호가 성공적으로 재설정되었습니다. 잠시 후 로그인 페이지로 이동합니다.')
+      
       // 2초 후 로그인 페이지로 이동
       setTimeout(() => {
         navigate('/login')
       }, 2000)
-    } catch (error) {
-      console.error('비밀번호 재설정 실패:', error)
-      const errorMessage = error.response?.data?.message || '비밀번호 재설정에 실패했습니다.'
-      setMessage(errorMessage)
-    } finally {
-      setLoading(false)
+    } catch (err) {
+      console.error('비밀번호 재설정 실패:', err)
     }
+    // try {
+    //   const result = await authService.resetPassword(
+    //     token, 
+    //     formData.newPassword, 
+    //     formData.confirmPassword
+    //   )
+      
+    //   setMessage('비밀번호가 성공적으로 재설정되었습니다. 잠시 후 로그인 페이지로 이동합니다.')
+    //   // 2초 후 로그인 페이지로 이동
+    //   setTimeout(() => {
+    //     navigate('/login')
+    //   }, 2000)
+    // } catch (error) {
+    //   console.error('비밀번호 재설정 실패:', error)
+    //   const errorMessage = error.response?.data?.message || '비밀번호 재설정에 실패했습니다.'
+    //   setMessage(errorMessage)
+    // } finally {
+    //   setLoading(false)
+    // }
   }
 
   return (
