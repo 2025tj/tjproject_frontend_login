@@ -1,29 +1,33 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import AppRouter from '@app/router/AppRouter'
 import './App.css'
-import {GlobalAlert} from '@shared/components/layout'
-import {Header} from '@shared/components/layout'
-import { useDispatch } from 'react-redux'
-import { login, logout, setAccessToken } from '@features/auth/store/authSlice'
-import {api} from '@shared/utils/api'
-import { refreshApi } from '@shared/utils/api/client'
-// import { clearAccessToken, setAccessToken } from './utils/tokenStorage'
-import { extractAccessToken, getAccessToken, removeAccessToken, removeUserInfo, saveAccessFromHeaders, saveUserInfo } from '@features/auth/utils'
-import { useAuth } from './features/auth/hooks/useAuth'
+import { GlobalAlert } from '@shared/components/layout'
+import { useAuth } from '@features/auth/hooks/useAuth'
 
+// 로딩 컴포넌트
+const LoadingSpinner = () => (
+  <div style={{ 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    height: '100vh',
+    fontSize: '1.2rem'
+  }}>
+    앱을 초기화하는 중...
+  </div>
+)
 
 function App() {
-  const [isLoginChecked, setIsLoginChecked] = useState(false);
-  const dispatch = useDispatch()
-  const { refreshToken, loading: authLoading } = useAuth()
+  const { initialize, initialized, loading } = useAuth()
 
-  useEffect(() => {
-    // 앱 시작 시 토큰 갱신 시도
-    refreshToken()
-  }, [refreshToken])
+   useEffect(() => {
+    // 앱 시작시 인증 상태 초기화
+    initialize()
+  }, [initialize])
 
-  if (authLoading) {
-    return <div>로딩중...</div>;
+  // 초기화가 완료되지 않았으면 로딩 표시
+  if (!initialized || loading) {
+    return <LoadingSpinner />
   }
 
   // useEffect(()=>{

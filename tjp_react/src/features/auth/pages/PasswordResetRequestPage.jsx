@@ -1,6 +1,6 @@
 import React from 'react'
-import PasswordResetRequestForm from '../components/PasswordResetRequestForm'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
+import PasswordResetRequestForm from '@features/auth/components/PasswordResetRequestForm'
 
 const PasswordResetRequestPage = () => {
   const navigate = useNavigate()

@@ -1,13 +1,13 @@
 import axios from 'axios'
-import { extractAccessToken, getAccessToken, isTokenExpired, isTokenExpiringSoon, removeAccessToken, removeToken, saveAccessFromHeaders} from '@features/auth/utils'
-// import {store} from '@app/store'
-// import { getAccessToken } from './tokenStorage'
-import { clearAccessToken, setAccessToken } from '@features/auth/store/authSlice'
+import { extractAccessToken, isTokenExpired, isTokenExpiringSoon } from '@features/auth/utils'
+import store from '@app/store'
+import { updateAccessToken } from '@features/auth/store/authSlice'
 
-// 1) axios 인스턴스
+
+// 기본 API 인스턴스
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api',
-    withCredentials: true, // 쿠키 포함 요청 허용
+  baseURL: 'http://localhost:8080/api',
+  withCredentials: true,
 })
 
 // 리프레시 전용 인스턴스 (인터셉터 없이 오로지 쿠키만 자동 전송)
@@ -15,6 +15,7 @@ export const refreshApi = axios.create({
   baseURL: 'http://localhost:8080/api/auth',
   withCredentials: true,
 })
+
 
 
 // 2) 요청 인터셉터: 만료전 자동 refresh

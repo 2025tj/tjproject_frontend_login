@@ -1,25 +1,32 @@
 import api from '@shared/utils/api/client'
 
 const authApi = {
-  // 모든 인증 관련 API를 여기서 관리
+  // 기본 인증
   login: (credentials) => api.post('/auth/login', credentials),
   signup: (userData) => api.post('/auth/signup', userData),
   logout: () => api.post('/auth/logout'),
   refresh: () => api.post('/auth/refresh'),
+
+
+  // 사용자 정보
   getProfile: () => api.get('/users/me/details'),
+  updateProfile: (userData) => api.put('/users/me', userData),
   
-  // 소셜 관련
+   // 소셜 로그인 관련
   linkSocial: (provider, email) => api.post('/social/link', { provider, email }),
   unlinkSocial: (provider) => api.delete(`/social/unlink/${provider}`),
   getLinkedProviders: () => api.get('/social/linked-providers'),
   
+  // OAuth2 플로우
+  completeOAuth2: () => api.get('/auth/oauth2/complete'),
+  getPendingSocialLink: () => api.get('/social/pending-social-link'),
+  getPendingSocialSignup: () => api.get('/social/pending-social-signup'),
+
   // 이메일 관련
   verifyEmail: (token) => api.get('/email/verify', { params: { token } }),
   resendVerification: () => api.post('/email/resend-verification'),
   
   // 비밀번호 관련
-  // requestPasswordReset: (email) => api.post('/auth/password/reset-request', { email }),
-  // resetPassword: (data) => api.post('/auth/password/reset', data),
   requestPasswordReset: (email) => api.post('/auth/password/reset-request', { email }),
   validatePasswordResetToken: (token) => api.get('/auth/password/validate-token', { params: { token } }),
   resetPassword: (token, newPassword, confirmPassword) => 
@@ -28,6 +35,9 @@ const authApi = {
       newPassword,
       confirmPassword
     }),
+
+  // 토큰 검증
+  validateToken: () => api.get('/auth/validate'),
 }
 
 export default authApi

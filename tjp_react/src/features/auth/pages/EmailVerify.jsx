@@ -1,7 +1,6 @@
-// src/pages/EmailVerify.jsx
-import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import {api} from '@shared/utils/api';
+import { useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { api } from '@shared/utils/api'
 
 export default function EmailVerify() {
   const [searchParams] = useSearchParams();
