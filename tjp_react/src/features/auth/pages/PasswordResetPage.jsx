@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import PasswordResetForm from '../components/PasswordResetForm'
-import { authService } from '../services/authApi'
+import { authService } from '../services/authService'
 
 const PasswordResetPage = () => {
   const [searchParams] = useSearchParams()
@@ -17,7 +17,7 @@ const PasswordResetPage = () => {
       }
 
       try {
-        await authService.validatePasswordResetToken(token)
+        await authService.requestPasswordReset(token)
         setTokenValid(true)
       } catch (error) {
         console.error('토큰 검증 실패:', error)

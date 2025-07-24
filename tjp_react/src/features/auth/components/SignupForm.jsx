@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router'
-import {api} from '@shared/utils/api'
+import { useDispatch, useSelector } from 'react-redux'
+import { signupThunk } from '../store/authThunk'
+import { useNavigate } from 'react-router-dom'
 
 const SignupForm = () => {
     const [form, setForm] = useState({
@@ -10,7 +11,9 @@ const SignupForm = () => {
         nickname: ''
     })
     const [errors, setErrors] = useState({})
+    const dispatch = useDispatch()
     const navigate = useNavigate()
+    const { loading } = useSelector(state => state.auth)
 
     const handleChange = (e) => {
         const { name, value  } = e.target
@@ -19,18 +22,27 @@ const SignupForm = () => {
 
     const handleSubmit = async(e) => {
         e.preventDefault()
+        setErrors({}) // 초기화
         try {
-            await api.post('/auth/signup', form)
+            await dispatch(signupThunk(form)).unwrap()
             alert('회원 가입 성공! 로그인 페이지로 이동합니다.')
             navigate('/login')
         } catch (err) {
-            if (err.response?.status === 400) {
-                setErrors(err.response.data) // 유효성 검사 실패
-            } else if (err.response?.status === 409) {
-                setErrors({email: '이미 사용중인 이메일 입니다.'})
+            if (typeof err === 'object') {
+                setErrors(err) // { email: '...', password: '...' } 형태
             } else {
-                alert('예상치 못한 오류가 발생했습니다.')
+                alert(err)
             }
+
+            // setErrors('회원가입에 실패했습니다.')
+            
+            // if (err.response?.status === 400) {
+            //     setErrors(err.response.data) // 유효성 검사 실패
+            // } else if (err.response?.status === 409) {
+            //     setErrors({email: '이미 사용중인 이메일 입니다.'})
+            // } else {
+            //     alert('예상치 못한 오류가 발생했습니다.')
+            // }
         }
     }
   return (
@@ -83,8 +95,8 @@ const SignupForm = () => {
                 {errors.nickname && <p style={{ color: 'red' }}>{errors.nickname}</p>}
             </div>
 
-            <button type="submit" style={{ marginTop: '1rem' }}>
-                회원가입
+            <button type="submit" style={{ marginTop: '1rem' }} disabled={loading}>
+                {loading ? '가입 중...' : '회원가입'}
             </button>
         </form>
     </>

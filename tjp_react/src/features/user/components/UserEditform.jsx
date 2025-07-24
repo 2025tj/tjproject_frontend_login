@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router'
-import {api} from '@shared/utils/api'
+import { fetchUserProfileThunk, updateUserInfoThunk } from '../store/userThunk'
 
 const UserEditform = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const { user, loading } = useSelector(state => state.user.profile)
     const [form, setForm] = useState({ nickname: '', password: '' })
 
     useEffect(() => {
-        api.get('/users/me').then(res => {
-        setForm(prev => ({ ...prev, ...res.data }))
-        })
-    }, [])
+        // 이미 전역 상태에 유저가 있다면 초기값 설정
+        if (user) {
+            setForm(prev => ({
+                ...prev,
+                nickname: user.nickname || '',
+            }))
+        } else {
+            dispatch(fetchUserProfileThunk())
+        }
+    }, [user, dispatch])
 
     const handleChange = e => {
         const { name, value } = e.target
@@ -18,13 +27,14 @@ const UserEditform = () => {
     }
 
     const handleSubmit = () => {
-        api.put('/users/me', form)
-            .then(() => {
-                alert('수정 완료')
-                navigate('/')
-            })
-            .catch(() => alert('수정 실패'))
-    }
+    dispatch(updateUserInfoThunk(form))
+      .unwrap()
+      .then(() => {
+        alert('수정 완료')
+        navigate('/')
+      })
+      .catch(() => alert('수정 실패'))
+  }
 
   return (
     <div>
@@ -41,7 +51,9 @@ const UserEditform = () => {
             placeholder="새 비밀번호"
             type="password"
         />
-        <button onClick={handleSubmit}>정보 수정</button>
+        <button onClick={handleSubmit} disabled={loading}>
+            {loading ? '수정 중...' : '정보 수정'}
+        </button>
     </div>
   )
 }

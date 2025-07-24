@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { authService } from '../services/authApi'
+import { authService } from '../services'
 
 const PasswordResetRequestForm = () => {
   const [email, setEmail] = useState('')
@@ -12,7 +12,7 @@ const PasswordResetRequestForm = () => {
     setMessage('')
     
     try {
-      const result = await authService.requestPasswordReset(email)
+      await authService.requestPasswordReset(email);
       setMessage('비밀번호 재설정 링크가 이메일로 발송되었습니다. 이메일을 확인해주세요.')
       setEmail('') // 폼 초기화
     } catch (error) {

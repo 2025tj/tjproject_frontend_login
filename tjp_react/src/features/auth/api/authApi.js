@@ -1,6 +1,6 @@
-import {api} from '@shared/utils/api/client.js'
-import {} from '@features/auth/utils/token'
+import {api, postAndUnwrap} from '@shared/utils/api'
 import { clearAccessToken, saveAccessFromHeaders } from '../utils';
+import { getAndUnwrap, unwrapApiResponse } from '../../../shared/utils/api';
 
 export const authApi = {
     /**
@@ -11,10 +11,7 @@ export const authApi = {
    * @param {string} userData.confirmPassword - 비밀번호 확인
    * @param {string} userData.nickname - 닉네임
    */
-  signup: async (userData) => {
-    const response = await api.post('/api/auth/signup', userData);
-    return response.data;
-  },
+  signup: (userData) => postAndUnwrap('/api/auth/signup', userData),
 
   /**
    * 로그인
@@ -23,10 +20,10 @@ export const authApi = {
    * @param {string} credentials.password - 비밀번호
    */
   login: async (credentials) => {
-    const response = await api.post('/api/auth/login', credentials);
+    const response = await api.post('/auth/login', credentials);
     // Access Token 저장
     saveAccessFromHeaders(response.headers)
-    return response.data;
+    return unwrapApiResponse(response.data);
   },
 
   /**
@@ -34,7 +31,7 @@ export const authApi = {
    */
   logout: async () => {
     try {
-      await api.post('/api/auth/logout');
+      await postAndUnwrap('/api/auth/logout')
     } catch (err) {
         console.warn('서버 로그아웃 실패:', err);
     } finally {
@@ -47,44 +44,31 @@ export const authApi = {
   /**
    * 토큰 갱신
    */
-  refreshToken: async () => {
-    const response = await api.post('/api/auth/refresh')
-    return response.data
-  },
+  refreshToken: () => postAndUnwrap('/api/auth/refresh'),
 
   /**
    * 토큰 검증
    */
-  validateToken: async () => {
-    const response = await api.get('/api/auth/validate')
-    return response.data
-  },
+  validateToken: () => getAndUnwrap('/api/auth/validate'),
 
   /**
    * OAuth2 완료 처리
    */
-  oauth2Complete: async () => {
-    const response = await api.get('/api/auth/oauth2/complete')
-    return response.data
-  },
+  oauth2Complete: () => getAndUnwrap('/api/auth/oauth2/complete'),
 
   /**
    * 비밀번호 재설정 요청
    * @param {string} email - 이메일
    */
-  requestPasswordReset: async (email) => {
-    const response = await api.post('/api/auth/password/reset-request', { email })
-    return response.data
-  },
+  requestPasswordReset: (email) =>
+    postAndUnwrap('/api/auth/password/reset-request', { email }),
 
   /**
    * 비밀번호 재설정 토큰 검증
    * @param {string} token - 재설정 토큰
    */
-  validatePasswordResetToken: async (token) => {
-    const response = await api.get(`/api/auth/password/validate-token?token=${token}`)
-    return response.data
-  },
+  validatePasswordResetToken: (token) =>
+    getAndUnwrap(`/api/auth/password/validate-token?token=${token}`),
 
   /**
    * 비밀번호 재설정 실행
@@ -93,8 +77,6 @@ export const authApi = {
    * @param {string} resetData.newPassword - 새 비밀번호
    * @param {string} resetData.confirmPassword - 새 비밀번호 확인
    */
-  resetPassword: async (resetData) => {
-    const response = await api.post('/api/auth/password/reset', resetData)
-    return response.data
-  },
+  resetPassword: (resetData) =>
+    postAndUnwrap('/api/auth/password/reset', resetData),
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { authService } from '../services/authApi'
+import { authService } from '../services'
 
 const PasswordResetForm = ({ token }) => {
   const navigate = useNavigate()
@@ -37,11 +37,11 @@ const PasswordResetForm = ({ token }) => {
     }
     
     try {
-      const result = await authService.resetPassword(
-        token, 
-        formData.newPassword, 
-        formData.confirmPassword
-      )
+      await authService.resetPassword({
+        token,
+        newPassword: formData.newPassword,
+        confirmPassword: formData.confirmPassword
+      });
       
       setMessage('비밀번호가 성공적으로 재설정되었습니다. 잠시 후 로그인 페이지로 이동합니다.')
       // 2초 후 로그인 페이지로 이동

@@ -1,46 +1,42 @@
-import React from 'react'
+
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    isAuthenticated: false,
-    user: null,
-    warning : null,
-    accessToken : null,
+  user: null,
+  isAuthenticated: false,
+  loading: false,
+  error: null,
+  warning: null,
 }
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        login(state, action) {
-            state.isAuthenticated = true
+        setUser(state, action) {
             state.user = action.payload
+            state.isAuthenticated = true
         },
-        logout(state) {
-            state.isAuthenticated = false
-            state.user = null
-            state.accessToken = null
-            state.warning= null
+        setLoading(state, action) {
+            state.loading = action.payload
         },
-        setWarning: (state, action) => {
+        setError(state, action) {
+            state.error = action.payload
+        },
+        setWarning(state, action) {
             state.warning = action.payload
         },
-        clearWarning: (state) => {
+        clearWarning(state) {
             state.warning = null
         },
-        setAccessToken(state, action) {
-            state.accessToken = action.payload
-        },
-        clearAccessToken(state) {
-            state.accessToken = null
-        },
-        //완전한 상태 초기화 액션
-        resetAuthState(state) {
-            Object.assign(state, initialState)
-            console.log('Auth 상태 완전 초기화')
+        clearAuth(state) {
+            state.user = null
+            state.isAuthenticated = false
+            state.error = null
+            state.warning = null
         }
-    }
+    },
 }) 
 
-export const { login, logout, setWarning, clearWarning, setAccessToken, clearAccessToken, resetAuthState } = authSlice.actions
+export const { setUser, setLoading, setError, setWarning, clearWarning, clearAuth } = authSlice.actions
 export default authSlice.reducer

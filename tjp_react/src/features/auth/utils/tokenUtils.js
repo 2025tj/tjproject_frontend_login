@@ -4,6 +4,7 @@ import * as jwtDecode from 'jwt-decode'
 // 응답 헤더에서 AccessToken 추출
 export const extractAccessToken = (headers) => {
   const raw = headers['access-token'] || headers['Access-Token']
+  // const raw = headers['access-token'];
   return raw?.startsWith('Bearer ') ? raw.slice(7) : raw
 }
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {api} from '@shared/utils/api';
+import { userService } from '@features/user/services/userService'
 import Modal from '@shared/components/ui/Modal/Modal';
 // import OAuth2LoginModal from '../../../components/modals/OAuth2LinkModal';
 // import OAuth2LinkModal from '../../../components/modals/OAuth2LinkModal';
-import { getAccessToken } from '../utils/tokenUtils';
+import { getAccessToken } from '../utils';
 
 const OAuth2LinkSection = () => {
   const [linkedProviders, setLinkedProviders] = useState([]);
@@ -18,8 +18,8 @@ const OAuth2LinkSection = () => {
 
   const fetchLinkedProviders = async () => {
     try {
-      const response = await api.get('/social/linked-providers');
-      setLinkedProviders(response.data);  
+      const data = await userService.getLinkedProviders();
+      setLinkedProviders(data);  
     } catch (error) {
       console.error('연동된 계정 조회 실패:', error);
     }
@@ -102,7 +102,7 @@ const OAuth2LinkSection = () => {
     if (!confirm(`${provider} 계정 연동을 해제하시겠습니까?`)) return;
 
     try {
-      await api.delete(`/social/unlink/${provider}`);
+      await userService.unlinkSocial(provider);
       alert('연동이 해제되었습니다.');
       fetchLinkedProviders();
     } catch (error) {

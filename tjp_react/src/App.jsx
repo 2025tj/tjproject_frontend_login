@@ -1,42 +1,32 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import AppRouter from '@app/router/AppRouter'
 import './App.css'
 import {GlobalAlert} from '@shared/components/layout'
-import {Header} from '@shared/components/layout'
-import { useDispatch } from 'react-redux'
-import { login, logout, setAccessToken } from '@features/auth/store/authSlice'
-import {api} from '@shared/utils/api'
-import { refreshApi } from '@shared/utils/api/client'
-// import { clearAccessToken, setAccessToken } from './utils/tokenStorage'
-import { extractAccessToken, getAccessToken, removeAccessToken, removeUserInfo, saveAccessFromHeaders, saveUserInfo } from '@features/auth/utils/tokenUtils'
+import { useDispatch, useSelector } from 'react-redux'
+import { logoutThunk, restoreUserThunk } from './features/auth/store/authThunk'
+import { useAuthInit } from './features/auth/hooks/useAuthInit'
+import Loading from './features/auth/components/Loading'
+import { setAuthErrorHandler } from './shared/utils/api/client'
+import { useNavigate } from 'react-router'
+
 
 
 function App() {
-  const [isLoginChecked, setIsLoginChecked] = useState(false);
-  const dispatch = useDispatch()
 
-  useEffect(()=>{
-    const init = async () => {
-      try {
-        const res = await refreshApi.post('/refresh', null, {withCredentials: true})
-        saveAccessFromHeaders(res.headers)
+  useAuthInit()
+  const { loading } = useSelector(state => state.auth)
 
-        const userRes = await api.get('/users/me/details')
-        saveUserInfo(userRes.data)
-      } catch (err) {
-        removeUserInfo()
-        removeAccessToken()
-      } finally {
-        setIsLoginChecked(true)
-      }
-    }
+  // 콜백 등록 (1회)
+  // useEffect(() => {
+  //   setAuthErrorHandler(() => {
+  //     dispatch(logoutThunk())
+  //     navigate('/login')
+  //   })
+  // }, [dispatch, navigate])
 
-    init()
-  }, [dispatch])
-
-  if (!isLoginChecked) {
-    return <div>로딩중...</div>;
-  }
+  // if (loading) {
+  //   return <Loading />
+  // }
 
   return (
     <>

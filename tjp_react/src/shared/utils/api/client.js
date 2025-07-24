@@ -17,6 +17,12 @@ export const refreshApi = axios.create({
   withCredentials: true,
 })
 
+let onAuthError = null // 콜백 초기화
+
+export const setAuthErrorHandler = (fn) => {
+  onAuthError = fn
+}
+
 
 // 2) 요청 인터셉터: 만료전 자동 refresh
 api.interceptors.request.use(async(config) => {
@@ -37,7 +43,8 @@ api.interceptors.request.use(async(config) => {
         }
       } catch {
         clearAccessToken()
-        window.location.href = '/login'
+        // window.location.href = '/login'
+        onAuthError?.() // 콜백 실행
       } 
     } else if (token) {
       //Authorization 헤더에 붙이기
@@ -77,7 +84,8 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // 재발급 실패 시 로그인 페이지로
         clearAccessToken()
-        window.location.href = '/login'
+        // window.location.href = '/login'
+        onAuthError?.() // 콜백 실행
         return Promise.reject(refreshError)
       }
     }

@@ -1,9 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router'
-import {api} from '../../utils/api'
-import { logout } from '../../../features/auth/store/authSlice'
-import { removeUserInfo } from '../../../features/auth/utils/tokenUtils'
+import { logoutThunk } from '../../../features/auth/store/authThunk'
 
 const Header = () => {
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
@@ -12,15 +10,10 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            await api.post('/auth/logout', null, {
-                withCredentials: true, // 쿠키 삭제 요청
-            })
+            await dispatch(logoutThunk()).unwrap()
+            navigate('/login')
         } catch (err) {
             console.error('로그아웃 요청 실패:', err)
-        } finally {
-            // localStorage.removeItem('accessToken')  // accessToken제거
-            removeUserInfo()
-            navigate('/login')
         }
     }
 
