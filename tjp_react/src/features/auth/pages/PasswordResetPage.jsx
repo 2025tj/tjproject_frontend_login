@@ -17,7 +17,7 @@ const PasswordResetPage = () => {
       }
 
       try {
-        await authService.requestPasswordReset(token)
+        await authService.validateResetToken(token)
         setTokenValid(true)
       } catch (error) {
         console.error('토큰 검증 실패:', error)

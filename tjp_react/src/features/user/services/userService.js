@@ -50,8 +50,11 @@ export const userService = {
     }
   },
   getLinkedProviders: async () => {
+    console.log('getLinkedProviders진입')
     try {
-      return await oauth2Api.getLinkedProviders()
+      const res = await oauth2Api.getLinkedProviders()
+      console.log('res :', res)
+      return res
     } catch (err) {
       throw new ApiError(err?.response?.data || err)
     }

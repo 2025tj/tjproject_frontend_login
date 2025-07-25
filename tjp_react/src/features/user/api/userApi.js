@@ -6,13 +6,13 @@ export const userApi = {
    * 현재 로그인한 사용자 이메일 조회 (간략 정보)
    * GET /api/users/me
    */
-  getCurrentUserEmail: () => getAndUnwrap('/api/users/me'),
+  getCurrentUserEmail: () => getAndUnwrap('/users/me'),
 
   /**
    * 현재 로그인한 사용자 상세 정보 조회
    * GET /api/users/me/details
    */
-  getProfile: () => getAndUnwrap('/api/users/me/details'),
+  getProfile: () => getAndUnwrap('/users/me/details'),
 
   /**
    * 현재 사용자 정보 수정
@@ -23,7 +23,7 @@ export const userApi = {
    * @param {string} [updateData.name]
    */
   updateUserInfo: (updateData) =>
-    putAndUnwrap('/api/users/me', updateData),
+    putAndUnwrap('/users/me', updateData),
 
   /**
    * 소셜 계정 연동
@@ -33,12 +33,12 @@ export const userApi = {
    * @param {string} linkData.provider
    */
   linkSocial: (linkData) =>
-    postAndUnwrap('/api/users/link-social', linkData),
+    postAndUnwrap('/users/link-social', linkData),
 
   /**
    * 소셜 연동 대기 중인 사용자 정보 조회
    * GET /api/users/pending-social-link
    */
   getPendingSocialLink: () =>
-    getAndUnwrap('/api/users/pending-social-link'),
+    getAndUnwrap('/users/pending-social-link'),
 }

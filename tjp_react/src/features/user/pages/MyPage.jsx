@@ -11,6 +11,7 @@ import { emailService } from '../../email/services/emailService'
 const MyPage = () => {
     const user = useSelector(state => state.user.profile)
     const loading = useSelector(state => state.user.loading)
+    const error = useSelector(state => state.user.error)
     const [resendLoading, setResendLoading] = useState(false);
     const [resendCooldown, setResendCooldown] = useState(0);
     const navigate = useNavigate();
@@ -53,7 +54,7 @@ const MyPage = () => {
 
         setResendLoading(true);
         try {
-            await emailService.resendVerificationEmail()
+            await emailService.resendVerification()
             alert('인증 메일이 재발송되었습니다. 이메일을 확인해주세요.');
             setResendCooldown(60); // 60초 쿨다운
         } catch (error) {
@@ -64,6 +65,7 @@ const MyPage = () => {
         }
     };
     if (loading) return <div>로딩중...</div>;
+    if (error) return <div style={{ color: 'red' }}>에러: {error}</div>
 
   return (
     <div>

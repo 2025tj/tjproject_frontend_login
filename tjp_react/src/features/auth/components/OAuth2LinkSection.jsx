@@ -19,6 +19,7 @@ const OAuth2LinkSection = () => {
   const fetchLinkedProviders = async () => {
     try {
       const data = await userService.getLinkedProviders();
+      console.log('Section/getLinkedProviders(): ', data)
       setLinkedProviders(data);  
     } catch (error) {
       console.error('연동된 계정 조회 실패:', error);

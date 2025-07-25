@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router'
 function App() {
 
   useAuthInit()
-  const { loading } = useSelector(state => state.auth)
+  // const { loading } = useSelector(state => state.auth)
 
   // 콜백 등록 (1회)
   // useEffect(() => {

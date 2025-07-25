@@ -68,6 +68,7 @@ export const restoreUserThunk = createAsyncThunk(
     async (_, { dispatch }) => {
         dispatch(setLoading(true))
         try {
+            console.log('authService.tryResptoreUser()')
             const user = await authService.tryRestoreUser()
             if (user) {
                 dispatch(setUser(user))

@@ -6,7 +6,8 @@ import { fetchUserProfileThunk, updateUserInfoThunk } from '../store/userThunk'
 const UserEditform = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const { user, loading } = useSelector(state => state.user.profile)
+    const user = useSelector(state => state.user.profile)
+    const loading = useSelector(state => state.user.loading)
     const [form, setForm] = useState({ nickname: '', password: '' })
 
     useEffect(() => {
@@ -35,6 +36,8 @@ const UserEditform = () => {
       })
       .catch(() => alert('수정 실패'))
   }
+
+  if (!user) return null // 또는 <div>로딩 중...</div>
 
   return (
     <div>

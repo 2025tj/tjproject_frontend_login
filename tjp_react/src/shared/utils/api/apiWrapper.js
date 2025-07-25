@@ -8,6 +8,7 @@ export const postAndUnwrap = async (url, body) => {
 
 export const getAndUnwrap = async (url) => {
   const res = await api.get(url)
+  console.log('getAndUnWrap/res : ', res)
   return unwrapApiResponse(res.data)
 }
 
@@ -18,7 +19,7 @@ export const putAndUnwrap = async (url, body) => {
 
 export const deleteAndUnwrap = async (url) => {
   const res = await api.delete(url)
-  return unwrapApiResponse(res.data)
+  return unwrapApiResponse(res)
 }
 
 export const methodAndUnwrap = async (method, url, body) => {

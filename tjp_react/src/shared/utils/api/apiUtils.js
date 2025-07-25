@@ -29,3 +29,17 @@ export function unwrapApiResponse(res) {
 
   return res.data
 }
+
+export function unwrapApiResponseWithoutData(res) {
+  if (!res.success) {
+    throw new ApiError({
+      message: res.message || 'API 처리 실패',
+      code: res.code || 'UNKNOWN_ERROR',
+      timestamp: res.timestamp || new Date().toISOString(),
+      path: res.path || '',
+      errors: res.errors || []
+    })
+  }
+
+  return res.data ?? null
+}

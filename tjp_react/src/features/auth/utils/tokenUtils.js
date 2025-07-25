@@ -1,12 +1,24 @@
 // jwt 디코딩, 만료 여부 판단
 import * as jwtDecode from 'jwt-decode'
 
-// 응답 헤더에서 AccessToken 추출
+// // 응답 헤더에서 AccessToken 추출
 export const extractAccessToken = (headers) => {
-  const raw = headers['access-token'] || headers['Access-Token']
-  // const raw = headers['access-token'];
-  return raw?.startsWith('Bearer ') ? raw.slice(7) : raw
+  const tokenHeaderNames = ['access-token', 'Access-Token', 'authorization', 'Authorization']
+
+  for (const name of tokenHeaderNames) {
+    const raw = headers[name]
+    if (raw) {
+      return raw.startsWith('Bearer ') ? raw.slice(7) : raw
+    }
+  }
+
+  return null
 }
+// export const extractAccessToken = (headers) => {
+//   const raw = headers['access-token'] || headers['Access-Token']
+//   // const raw = headers['access-token'];
+//   return raw?.startsWith('Bearer ') ? raw.slice(7) : raw
+// }
 
 // 토큰이 곧 만료되는지 확인
 export const isTokenExpiringSoon = (token, buffer = 120) => {

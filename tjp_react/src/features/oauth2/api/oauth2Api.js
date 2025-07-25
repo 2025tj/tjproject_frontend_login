@@ -3,6 +3,7 @@ import {
   getAndUnwrap,
   deleteAndUnwrap,
 } from '@shared/utils/api/apiWrapper'
+import { api } from '../../../shared/utils/api'
 
 export const oauth2Api = {
     /**
@@ -19,7 +20,7 @@ export const oauth2Api = {
    * @param {string} provider - 'google' | 'kakao' 등
    */
   unlinkSocial: async (provider) => {
-    return await deleteAndUnwrap(`/social/unlink/${provider}`)
+    return await api.delete(`/social/unlink/${provider}`)
   },
 
   /**
@@ -27,7 +28,10 @@ export const oauth2Api = {
    * @returns {Promise<string[]>} ex) ['google', 'kakao']
    */
   getLinkedProviders: async () => {
-    return await getAndUnwrap('/social/linked-providers')
+    console.log('OAuth2Api/getLinkedProviders 진입')
+    const res = await api.get('/social/linked-providers')
+    console.log('OAuth2Api/res :', res)
+    return res.data
   },
 
 }

@@ -25,13 +25,24 @@ const LoginForm = () => {
     try {
       await dispatch(loginThunk(form)).unwrap()
       navigate('/')
-    } catch (errMsg) {
-      console.error('로그인 실패:', errMsg)
-      if (errMsg.includes('401')) {
-        setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+    } catch (err) {
+      console.error('로그인 실패:', err)
+      // 추가 디버깅 정보
+      if (err.response) {
+        console.log('에러 응답:', err.response)
+        console.log('에러 응답 헤더:', err.response.headers)
+        console.log('에러 응답 데이터:', err.response.data)
+        console.log('에러 응답 상태:', err.response.status)
+      } else if (err.request) {
+        console.log('요청은 보냈지만 응답 없음:', err.request)
       } else {
-        setError(errMsg || '서버 오류. 잠시 후 다시 시도해주세요.')
+        console.log('요청 설정 중 에러:', err.message)
       }
+      // if (errMsg.includes('401')) {
+      //   setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+      // } else {
+      //   setError(errMsg || '서버 오류. 잠시 후 다시 시도해주세요.')
+      // }
     }
   }
 

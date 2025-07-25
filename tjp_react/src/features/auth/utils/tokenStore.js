@@ -26,6 +26,8 @@ export const clearAccessToken = () => {
 }
 
 export const saveAccessFromHeaders = (headers) => {
+  console.log('headers :', headers)
   const token = extractAccessToken(headers)
+  console.log('token :', token)
   if (token) setAccessToken(token)
 }
