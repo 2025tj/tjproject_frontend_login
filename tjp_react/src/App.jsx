@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { useEffect } from 'react'
 import AppRouter from '@app/router/AppRouter'
 import './App.css'
 import {GlobalAlert} from '@shared/components/layout'

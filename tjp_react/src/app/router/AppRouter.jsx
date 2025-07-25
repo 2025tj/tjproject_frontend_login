@@ -27,38 +27,20 @@ const AppRouter = () => {
             <AuthRedirectHandler />
             <Header />
             <Routes>
-                {/* 공개 페이지 */}
                 <Route path="/" element={<Home />} />
                 
                 {/* 마이페이지 - 인증 필요 */}
                 <Route path="/mypage" element={<ProtectedMyPage />} />
                 
-                {/* 인증 관련 페이지들 - 이미 로그인된 경우 홈으로 리다이렉트 */}
+                {/* 로그인 - 이미 로그인된 경우 홈으로 리다이렉트 */}
                 <Route path="/login" element={
-                    isAuthenticated 
-                        ? <Navigate to="/" replace />
-                        : <LoginPage />
+                    !isAuthenticated 
+                        ? <LoginPage />
+                        : <Navigate to="/" replace />
                 } />
                 
                 {/* 회원가입 */}
-                <Route path="/signup" element={
-                    isAuthenticated 
-                        ? <Navigate to="/" replace />
-                        : <SignupPage />
-                } />
-
-                {/* 비밀번호 재설정 관련 */}
-                <Route path="/auth/password-reset-request" element={
-                    isAuthenticated 
-                        ? <Navigate to="/" replace />
-                        : <PasswordResetRequestPage />
-                } />
-                    
-                <Route path="/auth/password-reset" element={
-                    isAuthenticated 
-                        ? <Navigate to="/" replace />
-                        : <PasswordResetPage />
-                } />
+                <Route path="/signup" element={<SignupPage />} />
                 
                 {/* OAuth2 관련 */}
                 <Route path="/oauth2/login" element={<OAuth2Redirect />} />
@@ -66,6 +48,18 @@ const AppRouter = () => {
                 
                 {/* 이메일 인증 */}
                 <Route path="/email/verify" element={<EmailVerify />} />
+                
+                {/* 🆕 비밀번호 재설정 관련 */}
+                <Route path="/auth/password-reset-request" element={
+                    !isAuthenticated 
+                        ? <PasswordResetRequestPage />
+                        : <Navigate to="/" replace />
+                } />
+                <Route path="/auth/password-reset" element={
+                    !isAuthenticated 
+                        ? <PasswordResetPage />
+                        : <Navigate to="/" replace />
+                } />
                 
                 {/* 기타 리다이렉트나 404 처리 */}
                 <Route path="*" element={<Navigate to="/" replace />} />

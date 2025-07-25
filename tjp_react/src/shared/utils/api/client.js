@@ -5,10 +5,10 @@ import { saveAccessFromHeaders, isTokenExpiringSoon, getAccessToken, clearAccess
 // 인증 없이 접근 가능한 경로
 const NO_AUTH_ENDPOINTS=['/auth/login', '/auth/signup', '/auth/refresh']
 
-// 기본 API 인스턴스
+// 1) axios 인스턴스
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  withCredentials: true,
+    baseURL: 'http://localhost:8080/api',
+    withCredentials: true, // 쿠키 포함 요청 허용
 })
 
 // 리프레시 전용 인스턴스 (인터셉터 없이 오로지 쿠키만 자동 전송)

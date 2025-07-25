@@ -35,10 +35,8 @@ export const isTokenExpiringSoon = (token, buffer = 120) => {
 export const isTokenExpired = (token) => {
   try {
     const { exp } = jwtDecode(token)
-    const currentTime = Math.floor(Date.now() / 1000)
-    return (exp - currentTime) <= bufferSeconds
-  } catch (error) {
-    console.warn('토큰 디코드 실패:', error)
+    return Date.now() / 1000 > exp
+  } catch {
     return true
   }
 } 

@@ -1,2 +1,2 @@
-export * from './authService'
+export * from '../services/authService'
 export * from './passwordService'

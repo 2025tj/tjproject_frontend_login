@@ -1,16 +1,5 @@
 
 import { createSlice } from '@reduxjs/toolkit'
-import { 
-  loginThunk, 
-  logoutThunk, 
-  refreshTokenThunk, 
-  signupThunk,
-  requestPasswordResetThunk, 
-  resetPasswordThunk,
-  initializeAuthThunk,
-  validateTokenThunk,
-  completeOAuth2Thunk
-} from './authThunks'
 
 const initialState = {
   user: null,
