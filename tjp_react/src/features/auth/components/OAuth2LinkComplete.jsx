@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import React, { useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 const OAuth2LinkComplete = () => {
   const [searchParams] = useSearchParams();
