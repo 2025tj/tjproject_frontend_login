@@ -1,56 +1,32 @@
 import { useEffect } from 'react'
+import { useEffect } from 'react'
 import AppRouter from '@app/router/AppRouter'
 import './App.css'
-import { GlobalAlert } from '@shared/components/layout'
-import { useAuth } from '@features/auth/hooks/useAuth'
+import {GlobalAlert} from '@shared/components/layout'
+import { useDispatch, useSelector } from 'react-redux'
+import { logoutThunk, restoreUserThunk } from './features/auth/store/authThunk'
+import { useAuthInit } from './features/auth/hooks/useAuthInit'
+import Loading from './features/auth/components/Loading'
+import { setAuthErrorHandler } from './shared/utils/api/client'
+import { useNavigate } from 'react-router'
 
-// 로딩 컴포넌트
-const LoadingSpinner = () => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    height: '100vh',
-    fontSize: '1.2rem'
-  }}>
-    앱을 초기화하는 중...
-  </div>
-)
+
 
 function App() {
-  const { initialize, initialized, loading } = useAuth()
 
-   useEffect(() => {
-    // 앱 시작시 인증 상태 초기화
-    initialize()
-  }, [initialize])
+  useAuthInit()
+  // const { loading } = useSelector(state => state.auth)
 
-  // 초기화가 완료되지 않았으면 로딩 표시
-  if (!initialized || loading) {
-    return <LoadingSpinner />
-  }
+  // 콜백 등록 (1회)
+  // useEffect(() => {
+  //   setAuthErrorHandler(() => {
+  //     dispatch(logoutThunk())
+  //     navigate('/login')
+  //   })
+  // }, [dispatch, navigate])
 
-  // useEffect(()=>{
-  //   const init = async () => {
-  //     try {
-  //       const res = await refreshApi.post('/refresh', null, {withCredentials: true})
-  //       saveAccessFromHeaders(res.headers)
-
-  //       const userRes = await api.get('/users/me/details')
-  //       saveUserInfo(userRes.data)
-  //     } catch (err) {
-  //       removeUserInfo()
-  //       removeAccessToken()
-  //     } finally {
-  //       setIsLoginChecked(true)
-  //     }
-  //   }
-
-  //   init()
-  // }, [dispatch])
-
-  // if (!isLoginChecked) {
-  //   return <div>로딩중...</div>;
+  // if (loading) {
+  //   return <Loading />
   // }
 
   return (

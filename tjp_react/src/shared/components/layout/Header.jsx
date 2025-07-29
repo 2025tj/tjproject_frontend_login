@@ -1,23 +1,20 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '@features/auth/hooks/useAuth'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, useNavigate } from 'react-router'
+import { logoutThunk } from '../../../features/auth/store/authThunk'
 
 const Header = () => {
   const navigate = useNavigate()
   const { isAuthenticated, logout, loading, getUserDisplayName } = useAuth()
 
-  const handleLogout = async () => {
-    if (loading) return
-    
-    try {
-      await logout().unwrap()
-      navigate('/login')
-    } catch (err) {
-      // 로그아웃은 실패해도 클라이언트 정리는 됨
-      console.error('로그아웃 중 오류:', err)
-      navigate('/login')
+    const handleLogout = async () => {
+        try {
+            await dispatch(logoutThunk()).unwrap()
+            navigate('/login')
+        } catch (err) {
+            console.error('로그아웃 요청 실패:', err)
+        }
     }
-  }
 
   return (
     <header style={{ 

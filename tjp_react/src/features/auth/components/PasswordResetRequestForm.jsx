@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAuth } from '@features/auth/hooks/useAuth'
+import { authService } from '../services'
 
 const PasswordResetRequestForm = () => {
   const [email, setEmail] = useState('')
@@ -8,32 +8,20 @@ const PasswordResetRequestForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    if (!email.trim()) {
-      return
-    }
-
-    // 백엔드 PasswordResetRequest validation과 일치
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      return
-    }
+    setLoading(true)
+    setMessage('')
     
     try {
-      // 백엔드 PasswordResetRequest 구조에 맞게 전송
-      await requestPasswordReset(email.trim()).unwrap()
-      setSuccessMessage('비밀번호 재설정 링크가 이메일로 발송되었습니다. 이메일을 확인해주세요.')
-      setEmail('')
-    } catch (err) {
-      console.error('비밀번호 재설정 요청 실패:', err)
+      await authService.requestPasswordReset(email);
+      setMessage('비밀번호 재설정 링크가 이메일로 발송되었습니다. 이메일을 확인해주세요.')
+      setEmail('') // 폼 초기화
+    } catch (error) {
+      console.error('비밀번호 재설정 요청 실패:', error)
+      const errorMessage = error.response?.data?.message || '오류가 발생했습니다. 다시 시도해주세요.'
+      setMessage(errorMessage)
+    } finally {
+      setLoading(false)
     }
-  }
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value)
-    
-    // 입력 시 메시지들 클리어
-    if (error) clearError()
-    if (successMessage) setSuccessMessage('')
   }
 
   return (

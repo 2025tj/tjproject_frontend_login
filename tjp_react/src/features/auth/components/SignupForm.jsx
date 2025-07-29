@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { signupThunk } from '../store/authThunk'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@features/auth/hooks/useAuth'
 
 const SignupForm = ({ 
   initialValues = {}, 
@@ -19,10 +20,10 @@ const SignupForm = ({
         nickname: '',
         ...initialValues
     })
-
-    // 외부에서 제공된 에러가 있으면 사용, 없으면 내부 에러 사용
-    const displayError = externalErrors._global || error
-    const isLoading = submitting || loading
+    const [errors, setErrors] = useState({})
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const { loading } = useSelector(state => state.auth)
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -68,41 +69,31 @@ const SignupForm = ({
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        
-        const validationErrors = validateForm()
-        if (Object.keys(validationErrors).length > 0) {
-            return
-        }
-        
-        // 백엔드 SignupRequest 구조에 맞게 전송
-        const submitData = {
-            email: form.email.trim(),
-            password: form.password,
-            confirmPassword: form.confirmPassword,
-            nickname: form.nickname.trim()
-        }
-
-        // 외부 onSubmit이 있으면 사용 (OAuth2 회원가입용)
-        if (externalOnSubmit) {
-            externalOnSubmit(submitData)
-            return
-        }
-
-        // 일반 회원가입
+        setErrors({}) // 초기화
         try {
-            await signup(submitData).unwrap()
-            alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.')
+            await dispatch(signupThunk(form)).unwrap()
+            alert('회원 가입 성공! 로그인 페이지로 이동합니다.')
             navigate('/login')
         } catch (err) {
-            console.error('회원가입 실패:', err)
+            if (typeof err === 'object') {
+                setErrors(err) // { email: '...', password: '...' } 형태
+            } else {
+                alert(err)
+            }
+
+            // setErrors('회원가입에 실패했습니다.')
+            
+            // if (err.response?.status === 400) {
+            //     setErrors(err.response.data) // 유효성 검사 실패
+            // } else if (err.response?.status === 409) {
+            //     setErrors({email: '이미 사용중인 이메일 입니다.'})
+            // } else {
+            //     alert('예상치 못한 오류가 발생했습니다.')
+            // }
         }
     }
-
-    const isFieldDisabled = (fieldName) => {
-        return disableFields.includes(fieldName) || isLoading
-    }
-
-    return (
+  return (
+    <>
         <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
             <div style={{ marginBottom: '1rem' }}>
                 <label htmlFor="email">이메일</label>
@@ -200,26 +191,8 @@ const SignupForm = ({
                 )}
             </div>
 
-            {displayError && (
-                <p style={{ color: 'red', marginBottom: '1rem', fontSize: '0.9rem' }}>
-                    {typeof displayError === 'string' ? displayError : '회원가입에 실패했습니다.'}
-                </p>
-            )}
-
-            <button 
-                type="submit" 
-                disabled={isLoading}
-                style={{ 
-                width: '100%', 
-                padding: '0.75rem',
-                backgroundColor: isLoading ? '#ccc' : '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: isLoading ? 'not-allowed' : 'pointer'
-                }}
-            >
-                {isLoading ? '처리 중...' : '회원가입'}
+            <button type="submit" style={{ marginTop: '1rem' }} disabled={loading}>
+                {loading ? '가입 중...' : '회원가입'}
             </button>
         </form>
     )

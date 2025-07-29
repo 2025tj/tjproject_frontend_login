@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { authApi } from '@features/auth/api'
-import { useAuth } from '@features/auth/hooks/useAuth'
+import React, { useState, useEffect } from 'react';
+import { userService } from '@features/user/services/userService'
+import Modal from '@shared/components/ui/Modal/Modal';
+// import OAuth2LoginModal from '../../../components/modals/OAuth2LinkModal';
+// import OAuth2LinkModal from '../../../components/modals/OAuth2LinkModal';
+import { getAccessToken } from '../utils';
 
 const OAuth2LinkSection = () => {
   const [linkedProviders, setLinkedProviders] = useState([])
@@ -14,8 +17,9 @@ const OAuth2LinkSection = () => {
 
   const fetchLinkedProviders = async () => {
     try {
-      const response = await authApi.getLinkedProviders()
-      setLinkedProviders(response.data)
+      const data = await userService.getLinkedProviders();
+      console.log('Section/getLinkedProviders(): ', data)
+      setLinkedProviders(data);  
     } catch (error) {
       console.error('연동된 계정 조회 실패:', error)
     }
@@ -87,9 +91,9 @@ const OAuth2LinkSection = () => {
     if (!confirm(`${provider} 계정 연동을 해제하시겠습니까?`)) return
 
     try {
-      await authApi.unlinkSocial(provider)
-      alert('연동이 해제되었습니다.')
-      fetchLinkedProviders()
+      await userService.unlinkSocial(provider);
+      alert('연동이 해제되었습니다.');
+      fetchLinkedProviders();
     } catch (error) {
       console.error('연동 해제 실패:', error)
       alert('연동 해제에 실패했습니다.')

@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { api } from '@shared/utils/api'
+// src/pages/EmailVerify.jsx
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { emailService } from '@features/email/services/emailService'
+import { useDispatch } from 'react-redux'
+import { fetchUserProfileThunk } from '@features/user/store/userThunk'
 
 export default function EmailVerify() {
   const [searchParams] = useSearchParams();
   const [result, setResult] = useState('인증 처리 중...');
   const token = searchParams.get('token');
-
+  const dispatch = useDispatch()
   const hasRun = useRef(false)
 
   // 1. 토큰으로 백엔드에 인증 요청
@@ -17,16 +20,29 @@ export default function EmailVerify() {
       setResult('토큰 정보가 없습니다.');
       return;
     }
-    api.get(`/email/verify?token=${token}`)
-      .then(res => setResult(res.data))
-      .catch(err => {
+  //   api.get(`/email/verify?token=${token}`)
+  //     .then(res => setResult(res.data))
+  //     .catch(err => {
+  //       setResult(
+  //         err.response?.data
+  //           ? err.response.data
+  //           : '알 수 없는 오류로 인증에 실패했습니다.'
+  //       );
+  //     });
+  // }, [token]);
+    emailService
+      .verifyToken(token)
+      .then((message) => {
+        setResult(message)
+        // 인증 성공 시 사용자 정보 최신화
+        dispatch(fetchUserProfileThunk())
+      })
+      .catch((err) => {
         setResult(
-          err.response?.data
-            ? err.response.data
-            : '알 수 없는 오류로 인증에 실패했습니다.'
-        );
-      });
-  }, [token]);
+          err.message || '알 수 없는 오류로 인증에 실패했습니다.'
+        )
+      })
+  }, [token, dispatch])
 
   // 2. 인증 성공 메시지에 따라 자동 리디렉트
   useEffect(() => {
